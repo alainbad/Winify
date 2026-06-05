@@ -9,6 +9,9 @@
     "android": { "package": "com.winify.app" },
     "web": { "bundler": "metro" },
     "plugins": ["expo-router"],
-    "scheme": "winify"
+    "scheme": "winify",
+    "experiments": {
+      "newArchEnabled": false
+    }
   }
 }
