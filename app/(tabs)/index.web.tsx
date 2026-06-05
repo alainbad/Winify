@@ -20,7 +20,7 @@ const BRAND_LOGOS: Record<string, string> = {
   'Booking.com': 'https://cdn.simpleicons.org/bookingcom/003580',
   'Airbnb':      'https://cdn.simpleicons.org/airbnb/FF5A5F',
   'Nintendo':    'https://cdn.simpleicons.org/nintendo/E60012',
-  'Disney+':     'https://cdn.simpleicons.org/disneyplus/FFFFFF',
+  'Disney+':     'https://cdn.simpleicons.org/disney/FFFFFF',
   'Expedia':     'https://cdn.simpleicons.org/expedia/FFC72C',
 }
 const webLogo = (brand: string) => BRAND_LOGOS[brand] ?? ''
