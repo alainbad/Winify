@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
+import { ThumbnailCard } from '@/components/ThumbnailCard'
 
 function WinnerToast() {
   const [visible, setVisible] = useState(false)
@@ -188,8 +189,12 @@ export default function HomeScreen() {
         <View style={{ paddingHorizontal: 16, marginBottom: 8 }}>
           <Text style={styles.sectionLabel}>All Competitions</Text>
         </View>
-        <View style={{ paddingHorizontal: 16, gap: 10, paddingBottom: 20 }}>
-          {others.map(p => <CompactCard key={p.id} pool={p} />)}
+        <View style={styles.grid}>
+          {others.map(p => (
+            <View key={p.id} style={styles.gridItem}>
+              <ThumbnailCard pool={p} />
+            </View>
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -240,4 +245,6 @@ const styles = StyleSheet.create({
   filterTabActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   filterTabText: { fontSize: 13, fontWeight: '600', color: Colors.textSec },
   filterTabTextActive: { color: 'white' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingBottom: 24 },
+  gridItem: { width: '50%', padding: 4 },
 })
