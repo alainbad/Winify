@@ -146,7 +146,7 @@ export const POOLS: Pool[] = [
 // For per-competition products, add an entry to GUMROAD_URLS keyed
 // by pool id — these override the default.
 // ─────────────────────────────────────────────────────────────
-export const DEFAULT_GUMROAD_URL = 'https://YOURNAME.gumroad.com/l/winify-entry'
+export const DEFAULT_GUMROAD_URL = 'https://badranalain.gumroad.com/l/spjrva'
 
 export const GUMROAD_URLS: Record<number, string> = {
   // 1: 'https://yourname.gumroad.com/l/amazon500',
