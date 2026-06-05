@@ -12,21 +12,21 @@ type CardTheme = {
 
 // svg = use simpleicons CDN via CSS backgroundImage (for brands not in FA5/MCI)
 const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon', size: 52 } },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox', size: 52 } },
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon', size: 72 } },
+  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox', size: 72 } },
   'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: { lib: 'svg', name: 'netflix', svgUrl: 'https://cdn.simpleicons.org/netflix/E50914' } },
-  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam', size: 52 } },
-  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify', size: 52 } },
+  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam', size: 72 } },
+  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify', size: 72 } },
   'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: { lib: 'svg', name: 'roblox', svgUrl: 'https://cdn.simpleicons.org/roblox/E2231A' } },
   'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853', icon: { lib: 'svg', name: 'googleplay', svgUrl: 'https://cdn.simpleicons.org/googleplay/34A853' } },
-  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple', size: 52 } },
+  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple', size: 72 } },
   'Uber Eats':   { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'ubereats', svgUrl: 'https://cdn.simpleicons.org/ubereats/FFFFFF' } },
   'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'starbucks', svgUrl: 'https://cdn.simpleicons.org/starbucks/FFFFFF' } },
-  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation', size: 52 } },
-  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft', size: 52 } },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation', size: 72 } },
+  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft', size: 72 } },
   'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'bookingcom', svgUrl: 'https://cdn.simpleicons.org/bookingcom/FFFFFF' } },
-  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb', size: 52 } },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch', size: 52 } },
+  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb', size: 72 } },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch', size: 72 } },
   'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'disneyplus', svgUrl: 'https://cdn.simpleicons.org/disneyplus/FFFFFF' } },
   'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: { lib: 'svg', name: 'expedia', svgUrl: 'https://cdn.simpleicons.org/expedia/FFC72C' } },
 }
@@ -38,7 +38,7 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
     backgroundImage: `url(${ic.svgUrl})`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center center',
-    backgroundSize: '58% 58%',
+    backgroundSize: '72% 72%',
   } as any : {}
 
   return (
@@ -50,8 +50,8 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
         ? <View style={[styles.giftSvgBox, svgBg]} />
         : (
           <View style={styles.giftIconWrap}>
-            {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 52} color={theme.textColor} brand />}
-            {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={ic.size ?? 52} color={theme.textColor} />}
+            {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 72} color={theme.textColor} brand />}
+            {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={ic.size ?? 72} color={theme.textColor} />}
           </View>
         )
       }
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   giftCircle2: { position: 'absolute', width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -20, left: -20 },
   giftIconWrap: { alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   giftBrandName: { fontSize: 14, fontWeight: '800', letterSpacing: 0.5, textAlign: 'center' },
-  giftSvgBox: { width: '58%', height: '58%' },
+  giftSvgBox: { width: '72%', height: '72%' },
   giftLabel: { position: 'absolute', bottom: 10, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
   giftLabelText: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.9)', letterSpacing: 1.5 },
   compCardLogo: { width: 120, height: 60 },
