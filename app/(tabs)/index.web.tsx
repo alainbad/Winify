@@ -4,6 +4,27 @@ import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
 
+const BRAND_LOGOS: Record<string, string> = {
+  'Amazon':      'https://cdn.simpleicons.org/amazon/FF9900',
+  'Xbox':        'https://cdn.simpleicons.org/xbox/FFFFFF',
+  'Netflix':     'https://cdn.simpleicons.org/netflix/E50914',
+  'Steam':       'https://cdn.simpleicons.org/steam/FFFFFF',
+  'Spotify':     'https://cdn.simpleicons.org/spotify/1DB954',
+  'Roblox':      'https://cdn.simpleicons.org/roblox/E2231A',
+  'Google Play': 'https://cdn.simpleicons.org/googleplay/FFFFFF',
+  'Apple':       'https://cdn.simpleicons.org/apple/FFFFFF',
+  'Uber Eats':   'https://cdn.simpleicons.org/ubereats/06C167',
+  'Starbucks':   'https://cdn.simpleicons.org/starbucks/FFFFFF',
+  'PlayStation': 'https://cdn.simpleicons.org/playstation/FFFFFF',
+  'Microsoft':   'https://cdn.simpleicons.org/microsoft/0078D4',
+  'Booking.com': 'https://cdn.simpleicons.org/bookingcom/FFFFFF',
+  'Airbnb':      'https://cdn.simpleicons.org/airbnb/FF5A5F',
+  'Nintendo':    'https://cdn.simpleicons.org/nintendo/E60012',
+  'Disney+':     'https://cdn.simpleicons.org/disneyplus/FFFFFF',
+  'Expedia':     'https://cdn.simpleicons.org/expedia/FFC72C',
+}
+const webLogo = (brand: string) => BRAND_LOGOS[brand] ?? `https://cdn.simpleicons.org/${brand.toLowerCase().replace(/[^a-z]/g, '')}/FFFFFF`
+
 // ─── Navbar ──────────────────────────────────────────────────────────────────
 function Navbar() {
   return (
@@ -42,7 +63,7 @@ function HeroCompCard({ pool }: { pool: Pool }) {
         <View style={styles.hotPillRight}>
           <Text style={styles.hotPillText}>FEATURED ⭐</Text>
         </View>
-        <Image source={{ uri: pool.logo }} style={styles.heroCompLogo} resizeMode="contain" />
+        <Image source={{ uri: webLogo(pool.brand) }} style={styles.heroCompLogo} resizeMode="contain" />
       </View>
       <View style={styles.heroCompBody}>
         <View style={styles.tierRow}>
@@ -135,7 +156,7 @@ function CompCard({ pool }: { pool: Pool }) {
             <Text style={styles.hotPillText}>HOT 🔥</Text>
           </View>
         )}
-        <Image source={{ uri: pool.logo }} style={styles.compCardLogo} resizeMode="contain" />
+        <Image source={{ uri: webLogo(pool.brand) }} style={styles.compCardLogo} resizeMode="contain" />
       </View>
       <View style={styles.compCardBody}>
         <View style={styles.tierRow}>
