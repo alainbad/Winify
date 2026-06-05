@@ -1,29 +1,47 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, TextInput, StyleSheet } from 'react-native'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
 
 const BRAND_LOGOS: Record<string, string> = {
   'Amazon':      'https://cdn.simpleicons.org/amazon/FF9900',
-  'Xbox':        'https://cdn.simpleicons.org/xbox/FFFFFF',
+  'Xbox':        'https://cdn.simpleicons.org/xbox/52B043',
   'Netflix':     'https://cdn.simpleicons.org/netflix/E50914',
   'Steam':       'https://cdn.simpleicons.org/steam/FFFFFF',
   'Spotify':     'https://cdn.simpleicons.org/spotify/1DB954',
   'Roblox':      'https://cdn.simpleicons.org/roblox/E2231A',
-  'Google Play': 'https://cdn.simpleicons.org/googleplay/FFFFFF',
+  'Google Play': 'https://cdn.simpleicons.org/googleplay/414141',
   'Apple':       'https://cdn.simpleicons.org/apple/FFFFFF',
   'Uber Eats':   'https://cdn.simpleicons.org/ubereats/06C167',
-  'Starbucks':   'https://cdn.simpleicons.org/starbucks/FFFFFF',
+  'Starbucks':   'https://cdn.simpleicons.org/starbucks/00704A',
   'PlayStation': 'https://cdn.simpleicons.org/playstation/FFFFFF',
-  'Microsoft':   'https://cdn.simpleicons.org/microsoft/0078D4',
-  'Booking.com': 'https://cdn.simpleicons.org/bookingcom/FFFFFF',
+  'Microsoft':   'https://cdn.simpleicons.org/microsoft/F25022',
+  'Booking.com': 'https://cdn.simpleicons.org/bookingcom/003580',
   'Airbnb':      'https://cdn.simpleicons.org/airbnb/FF5A5F',
   'Nintendo':    'https://cdn.simpleicons.org/nintendo/E60012',
   'Disney+':     'https://cdn.simpleicons.org/disneyplus/FFFFFF',
   'Expedia':     'https://cdn.simpleicons.org/expedia/FFC72C',
 }
-const webLogo = (brand: string) => BRAND_LOGOS[brand] ?? `https://cdn.simpleicons.org/${brand.toLowerCase().replace(/[^a-z]/g, '')}/FFFFFF`
+const webLogo = (brand: string) => BRAND_LOGOS[brand] ?? ''
+
+function LogoBox({ brand, bgColor, style, children }: { brand: string; bgColor: string; style?: any; children?: React.ReactNode }) {
+  const url = webLogo(brand)
+  return (
+    <View style={[
+      style,
+      { backgroundColor: bgColor },
+      url ? {
+        backgroundImage: `url(${url})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+        backgroundSize: '55% 55%',
+      } as any : {},
+    ]}>
+      {children}
+    </View>
+  )
+}
 
 // ─── Navbar ──────────────────────────────────────────────────────────────────
 function Navbar() {
@@ -55,7 +73,7 @@ function Navbar() {
 function HeroCompCard({ pool }: { pool: Pool }) {
   return (
     <TouchableOpacity onPress={() => router.push(`/competition/${pool.id}`)} activeOpacity={0.9} style={styles.heroCompCard}>
-      <View style={[styles.heroCompImage, { backgroundColor: pool.bgColor }]}>
+      <LogoBox brand={pool.brand} bgColor={pool.bgColor} style={styles.heroCompImage}>
         <View style={styles.heroCompTimePill}>
           <View style={styles.liveDot} />
           <Text style={styles.heroCompTimeText}>{pool.time}</Text>
@@ -63,8 +81,7 @@ function HeroCompCard({ pool }: { pool: Pool }) {
         <View style={styles.hotPillRight}>
           <Text style={styles.hotPillText}>FEATURED ⭐</Text>
         </View>
-        <Image source={{ uri: webLogo(pool.brand) }} style={styles.heroCompLogo} resizeMode="contain" />
-      </View>
+      </LogoBox>
       <View style={styles.heroCompBody}>
         <View style={styles.tierRow}>
           <View style={[styles.tierChip, { backgroundColor: pool.accentBg }]}>
@@ -146,7 +163,7 @@ function CompCard({ pool }: { pool: Pool }) {
   const isUrgent = pool.pct > 80
   return (
     <TouchableOpacity onPress={() => router.push(`/competition/${pool.id}`)} activeOpacity={0.88} style={styles.compCard}>
-      <View style={[styles.compCardImage, { backgroundColor: pool.bgColor }]}>
+      <LogoBox brand={pool.brand} bgColor={pool.bgColor} style={styles.compCardImage}>
         <View style={styles.timePill}>
           <View style={styles.liveDot} />
           <Text style={styles.timePillText}>{pool.time}</Text>
@@ -156,8 +173,7 @@ function CompCard({ pool }: { pool: Pool }) {
             <Text style={styles.hotPillText}>HOT 🔥</Text>
           </View>
         )}
-        <Image source={{ uri: webLogo(pool.brand) }} style={styles.compCardLogo} resizeMode="contain" />
-      </View>
+      </LogoBox>
       <View style={styles.compCardBody}>
         <View style={styles.tierRow}>
           <View style={[styles.tierChip, { backgroundColor: pool.accentBg }]}>
