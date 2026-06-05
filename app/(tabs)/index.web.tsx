@@ -1,43 +1,56 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, TextInput, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
 
-const BRAND_LOGOS: Record<string, string> = {
-  'Amazon':      'https://cdn.simpleicons.org/amazon/FF9900',
-  'Xbox':        'https://cdn.simpleicons.org/xbox/52B043',
-  'Netflix':     'https://cdn.simpleicons.org/netflix/E50914',
-  'Steam':       'https://cdn.simpleicons.org/steam/FFFFFF',
-  'Spotify':     'https://cdn.simpleicons.org/spotify/1DB954',
-  'Roblox':      'https://cdn.simpleicons.org/roblox/E2231A',
-  'Google Play': 'https://cdn.simpleicons.org/googleplay/414141',
-  'Apple':       'https://cdn.simpleicons.org/apple/FFFFFF',
-  'Uber Eats':   'https://cdn.simpleicons.org/ubereats/06C167',
-  'Starbucks':   'https://cdn.simpleicons.org/starbucks/00704A',
-  'PlayStation': 'https://cdn.simpleicons.org/playstation/FFFFFF',
-  'Microsoft':   'https://cdn.simpleicons.org/microsoft/F25022',
-  'Booking.com': 'https://cdn.simpleicons.org/bookingcom/003580',
-  'Airbnb':      'https://cdn.simpleicons.org/airbnb/FF5A5F',
-  'Nintendo':    'https://cdn.simpleicons.org/nintendo/E60012',
-  'Disney+':     'https://cdn.simpleicons.org/disney/FFFFFF',
-  'Expedia':     'https://cdn.simpleicons.org/expedia/FFC72C',
+type CardTheme = {
+  bg1: string; bg2: string; textColor: string;
+  icon?: { lib: 'fa5' | 'mci'; name: string; size?: number }
 }
-const webLogo = (brand: string) => BRAND_LOGOS[brand] ?? ''
 
-function LogoBox({ brand, bgColor, style, children }: { brand: string; bgColor: string; style?: any; children?: React.ReactNode }) {
-  const url = webLogo(brand)
+const CARD_THEMES: Record<string, CardTheme> = {
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon', size: 52 } },
+  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox', size: 52 } },
+  'Netflix':     { bg1: '#141414', bg2: '#2D0000', textColor: '#E50914', icon: { lib: 'fa5', name: 'netflix', size: 52 } },
+  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam', size: 52 } },
+  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify', size: 52 } },
+  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: { lib: 'fa5', name: 'roblox', size: 52 } },
+  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#414141', icon: { lib: 'fa5', name: 'google-play', size: 52 } },
+  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple', size: 52 } },
+  'Uber Eats':   { bg1: '#000000', bg2: '#06C167', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'food-fork-drink', size: 48 } },
+  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'coffee', size: 52 } },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation', size: 52 } },
+  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft', size: 52 } },
+  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'bed', size: 52 } },
+  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb', size: 52 } },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch', size: 52 } },
+  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'filmstrip', size: 52 } },
+  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: { lib: 'mci', name: 'airplane', size: 52 } },
+}
+
+function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; children?: React.ReactNode }) {
+  const theme = CARD_THEMES[pool.brand] ?? { bg1: pool.bgColor, bg2: pool.bgColor, textColor: '#FFFFFF' }
+  const ic = theme.icon
   return (
-    <View style={[
-      style,
-      { backgroundColor: bgColor },
-      url ? {
-        backgroundImage: `url(${url})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center center',
-        backgroundSize: '55% 55%',
-      } as any : {},
-    ]}>
+    <View style={[style, { backgroundColor: theme.bg1, position: 'relative', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }]}>
+      {/* Gradient overlay */}
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.5 }]} />
+      {/* Decorative circles */}
+      <View style={styles.giftCircle1} />
+      <View style={styles.giftCircle2} />
+      {/* Brand icon */}
+      <View style={styles.giftIconWrap}>
+        {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 52} color={theme.textColor} brand />}
+        {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={ic.size ?? 52} color={theme.textColor} />}
+      </View>
+      {/* Brand name */}
+      <Text style={[styles.giftBrandName, { color: theme.textColor }]}>{pool.brand}</Text>
+      {/* "Gift Card" label */}
+      <View style={styles.giftLabel}>
+        <Text style={styles.giftLabelText}>GIFT CARD</Text>
+      </View>
       {children}
     </View>
   )
@@ -73,7 +86,7 @@ function Navbar() {
 function HeroCompCard({ pool }: { pool: Pool }) {
   return (
     <TouchableOpacity onPress={() => router.push(`/competition/${pool.id}`)} activeOpacity={0.9} style={styles.heroCompCard}>
-      <LogoBox brand={pool.brand} bgColor={pool.bgColor} style={styles.heroCompImage}>
+      <GiftCardThumb pool={pool} style={styles.heroCompImage}>
         <View style={styles.heroCompTimePill}>
           <View style={styles.liveDot} />
           <Text style={styles.heroCompTimeText}>{pool.time}</Text>
@@ -81,7 +94,7 @@ function HeroCompCard({ pool }: { pool: Pool }) {
         <View style={styles.hotPillRight}>
           <Text style={styles.hotPillText}>FEATURED ⭐</Text>
         </View>
-      </LogoBox>
+      </GiftCardThumb>
       <View style={styles.heroCompBody}>
         <View style={styles.tierRow}>
           <View style={[styles.tierChip, { backgroundColor: pool.accentBg }]}>
@@ -163,7 +176,7 @@ function CompCard({ pool }: { pool: Pool }) {
   const isUrgent = pool.pct > 80
   return (
     <TouchableOpacity onPress={() => router.push(`/competition/${pool.id}`)} activeOpacity={0.88} style={styles.compCard}>
-      <LogoBox brand={pool.brand} bgColor={pool.bgColor} style={styles.compCardImage}>
+      <GiftCardThumb pool={pool} style={styles.compCardImage}>
         <View style={styles.timePill}>
           <View style={styles.liveDot} />
           <Text style={styles.timePillText}>{pool.time}</Text>
@@ -173,7 +186,7 @@ function CompCard({ pool }: { pool: Pool }) {
             <Text style={styles.hotPillText}>HOT 🔥</Text>
           </View>
         )}
-      </LogoBox>
+      </GiftCardThumb>
       <View style={styles.compCardBody}>
         <View style={styles.tierRow}>
           <View style={[styles.tierChip, { backgroundColor: pool.accentBg }]}>
@@ -443,6 +456,12 @@ const styles = StyleSheet.create({
   timePill: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
   timePillText: { fontSize: 11, fontWeight: '600', color: '#FFFFFF' },
   hotPill: { position: 'absolute', top: 10, right: 10, backgroundColor: '#EA580C', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
+  giftCircle1: { position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: 'rgba(255,255,255,0.08)', top: -30, right: -30 },
+  giftCircle2: { position: 'absolute', width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -20, left: -20 },
+  giftIconWrap: { alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  giftBrandName: { fontSize: 14, fontWeight: '800', letterSpacing: 0.5, textAlign: 'center' },
+  giftLabel: { position: 'absolute', bottom: 10, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
+  giftLabelText: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.9)', letterSpacing: 1.5 },
   compCardLogo: { width: 120, height: 60 },
   compCardBody: { padding: 14 },
   tierRow: { flexDirection: 'row', gap: 6, marginBottom: 8, alignItems: 'center' },
