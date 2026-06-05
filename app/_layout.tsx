@@ -11,7 +11,7 @@ export default function RootLayout() {
         <Stack.Screen name="competition/[id]/skill-gate" options={{ headerShown: false }} />
         <Stack.Screen name="competition/[id]/payment" options={{ headerShown: false }} />
         <Stack.Screen name="competition/[id]/success" options={{ headerShown: false }} />
-        <Stack.Screen name="winner-reveal" options={{ headerShown: false }} />
+        <Stack.Screen name="winner-reveal/index" options={{ headerShown: false }} />
       </Stack>
     </>
   )
