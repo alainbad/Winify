@@ -57,7 +57,7 @@ function MiniGiftCard({ pool }: { pool: Pool }) {
   )
 }
 
-type PayMethod = 'apple' | 'card'
+type PayMethod = 'apple' | 'google' | 'card'
 
 export default function PaymentWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -115,6 +115,10 @@ export default function PaymentWeb() {
                   <FontAwesome5 name="apple-pay" size={28} color={method === 'apple' ? Colors.primary : Colors.textSec} brand />
                   <Text style={[s.methodTabLabel, method === 'apple' && { color: Colors.primary }]}>Apple Pay</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => setMethod('google')} style={[s.methodTab, method === 'google' && s.methodTabActive]}>
+                  <FontAwesome5 name="google-pay" size={28} color={method === 'google' ? Colors.primary : Colors.textSec} brand />
+                  <Text style={[s.methodTabLabel, method === 'google' && { color: Colors.primary }]}>Google Pay</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => setMethod('card')} style={[s.methodTab, method === 'card' && s.methodTabActive]}>
                   <FontAwesome5 name="credit-card" size={20} color={method === 'card' ? Colors.primary : Colors.textSec} />
                   <Text style={[s.methodTabLabel, method === 'card' && { color: Colors.primary }]}>Card</Text>
@@ -151,10 +155,15 @@ export default function PaymentWeb() {
                       value={card.name} onChangeText={v => setCard(c => ({ ...c, name: v }))} />
                   </View>
                 </View>
-              ) : (
+              ) : method === 'apple' ? (
                 <View style={s.applePayBox}>
                   <FontAwesome5 name="apple-pay" size={48} color="#111111" brand />
                   <Text style={s.applePayText}>You'll be prompted to confirm with Touch ID / Face ID after clicking Pay.</Text>
+                </View>
+              ) : (
+                <View style={s.applePayBox}>
+                  <FontAwesome5 name="google-pay" size={48} color="#1A73E8" brand />
+                  <Text style={s.applePayText}>You'll be redirected to Google Pay to confirm payment after clicking Pay.</Text>
                 </View>
               )}
             </View>

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Colors } from '@/constants/theme'
 import { POOLS } from '@/lib/data'
 
-type PayMethod = 'apple' | 'card'
+type PayMethod = 'apple' | 'google' | 'card'
 type State = 'idle' | 'loading' | 'done'
 
 export default function PaymentScreen() {
@@ -65,6 +65,11 @@ export default function PaymentScreen() {
             <Text style={{ fontSize: 20, marginRight: 10 }}>🍎</Text>
             <Text style={[styles.methodLabel, method === 'apple' && styles.methodLabelActive]}>Apple Pay</Text>
             {method === 'apple' && <View style={styles.methodCheck}><Text style={{ fontSize: 11, fontWeight: '800', color: Colors.primary }}>✓</Text></View>}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setMethod('google')} style={[styles.methodBtn, method === 'google' && styles.methodBtnActive]}>
+            <Text style={{ fontSize: 20, marginRight: 10 }}>🇬</Text>
+            <Text style={[styles.methodLabel, method === 'google' && styles.methodLabelActive]}>Google Pay</Text>
+            {method === 'google' && <View style={styles.methodCheck}><Text style={{ fontSize: 11, fontWeight: '800', color: Colors.primary }}>✓</Text></View>}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setMethod('card')} style={[styles.methodBtn, method === 'card' && styles.methodBtnActive]}>
             <Text style={{ fontSize: 20, marginRight: 10 }}>💳</Text>
