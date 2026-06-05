@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native
 import { useLocalSearchParams, router } from 'expo-router'
 import { useState, useEffect, useRef } from 'react'
 import { Colors } from '@/constants/theme'
-import Svg, { Circle } from 'react-native-svg'
 
 const QUESTION = 'Which planet is known as the Red Planet?'
 const OPTIONS = [
@@ -13,8 +12,6 @@ const OPTIONS = [
 ]
 const CORRECT = 'B'
 const TOTAL = 10
-const RADIUS = 26
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS // ~163
 
 type Stage = 'answering' | 'correct' | 'wrong'
 
@@ -23,7 +20,6 @@ export default function SkillGateScreen() {
   const [timeLeft, setTimeLeft] = useState(TOTAL)
   const [stage, setStage] = useState<Stage>('answering')
   const [selected, setSelected] = useState<string | null>(null)
-  const dashOffset = useRef(new Animated.Value(0)).current
   const resultScale = useRef(new Animated.Value(0)).current
 
   // Countdown
@@ -36,16 +32,6 @@ export default function SkillGateScreen() {
     const t = setTimeout(() => setTimeLeft(s => s - 1), 1000)
     return () => clearTimeout(t)
   }, [timeLeft, stage])
-
-  // Animate ring
-  useEffect(() => {
-    const pct = timeLeft / TOTAL
-    Animated.timing(dashOffset, {
-      toValue: CIRCUMFERENCE * (1 - pct),
-      duration: 1000,
-      useNativeDriver: false,
-    }).start()
-  }, [timeLeft])
 
   // Result pop
   useEffect(() => {
@@ -64,7 +50,6 @@ export default function SkillGateScreen() {
     setSelected(null)
     setTimeLeft(TOTAL)
     resultScale.setValue(0)
-    dashOffset.setValue(0)
   }
 
   return (
@@ -81,24 +66,8 @@ export default function SkillGateScreen() {
 
       {/* Timer Ring */}
       {stage === 'answering' && (
-        <View style={styles.ringWrap}>
-          <Svg width={72} height={72}>
-            <Circle cx={36} cy={36} r={RADIUS} stroke="rgba(255,255,255,0.15)" strokeWidth={5} fill="none" />
-            <Circle
-              cx={36} cy={36} r={RADIUS}
-              stroke={timeLeft <= 3 ? '#EF4444' : '#A78BFA'}
-              strokeWidth={5}
-              fill="none"
-              strokeDasharray={CIRCUMFERENCE}
-              strokeDashoffset={0}
-              strokeLinecap="round"
-              rotation={-90}
-              origin="36,36"
-            />
-          </Svg>
-          <View style={styles.ringNum}>
-            <Text style={[styles.ringText, { color: timeLeft <= 3 ? '#EF4444' : 'white' }]}>{timeLeft}</Text>
-          </View>
+        <View style={[styles.ringWrap, { borderColor: timeLeft <= 3 ? '#EF4444' : '#A78BFA' }]}>
+          <Text style={[styles.ringText, { color: timeLeft <= 3 ? '#EF4444' : 'white' }]}>{timeLeft}</Text>
         </View>
       )}
 
@@ -157,8 +126,7 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 10, fontWeight: '800', letterSpacing: 2, color: '#A78BFA' },
   heading: { fontSize: 24, fontWeight: '800', color: 'white', marginBottom: 6, textAlign: 'center' },
   sub: { fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 24 },
-  ringWrap: { width: 72, height: 72, alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
-  ringNum: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  ringWrap: { width: 72, height: 72, borderRadius: 36, borderWidth: 4, alignItems: 'center', justifyContent: 'center', marginBottom: 24, backgroundColor: 'rgba(255,255,255,0.05)' },
   ringText: { fontSize: 22, fontWeight: '800' },
   questionCard: { width: '100%', backgroundColor: 'rgba(255,255,255,0.06)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 18, padding: 20 },
   question: { fontSize: 17, fontWeight: '700', color: 'white', textAlign: 'center', lineHeight: 24 },
