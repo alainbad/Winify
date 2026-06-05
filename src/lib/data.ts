@@ -1,0 +1,155 @@
+export type Pool = {
+  id: number
+  prize: string
+  emoji: string
+  tier: 'MICRO' | 'VOLUME' | 'MEGA'
+  entries: number
+  total: number
+  pct: number
+  time: string
+  price: number
+  accent: string
+  accentBg: string
+  hot: boolean
+  featured: boolean
+  desc: string
+}
+
+export const POOLS: Pool[] = [
+  {
+    id: 1,
+    prize: '$500 Amazon Voucher',
+    emoji: '🛍️',
+    tier: 'MEGA',
+    entries: 234,
+    total: 750,
+    pct: 31,
+    time: '18h 42m',
+    price: 2,
+    accent: '#6D28D9',
+    accentBg: '#F5F0FF',
+    hot: false,
+    featured: true,
+    desc: 'One lucky winner takes home a $500 Amazon voucher — shop anything you like, delivered to your door.',
+  },
+  {
+    id: 2,
+    prize: '$10 Xbox Gift Card',
+    emoji: '🎮',
+    tier: 'MICRO',
+    entries: 20,
+    total: 22,
+    pct: 91,
+    time: '12m',
+    price: 2,
+    accent: '#107C10',
+    accentBg: '#F0FFF0',
+    hot: true,
+    featured: false,
+    desc: 'Game credits for Xbox — top up your wallet instantly.',
+  },
+  {
+    id: 3,
+    prize: '$15 Netflix Gift Card',
+    emoji: '🎬',
+    tier: 'MICRO',
+    entries: 8,
+    total: 15,
+    pct: 53,
+    time: '1h 5m',
+    price: 2,
+    accent: '#E50914',
+    accentBg: '#FFF1F2',
+    hot: false,
+    featured: false,
+    desc: 'A month of premium Netflix on us.',
+  },
+  {
+    id: 4,
+    prize: '$50 Amazon Gift Card',
+    emoji: '📦',
+    tier: 'VOLUME',
+    entries: 55,
+    total: 75,
+    pct: 73,
+    time: '4h 12m',
+    price: 2,
+    accent: '#F59E0B',
+    accentBg: '#FFFBEB',
+    hot: false,
+    featured: false,
+    desc: '$50 to spend on anything at Amazon.',
+  },
+  {
+    id: 5,
+    prize: '$50 PlayStation Store',
+    emoji: '🎯',
+    tier: 'VOLUME',
+    entries: 62,
+    total: 75,
+    pct: 83,
+    time: '2h 30m',
+    price: 2,
+    accent: '#2563EB',
+    accentBg: '#EFF6FF',
+    hot: true,
+    featured: false,
+    desc: 'Top up your PSN wallet with $50.',
+  },
+  {
+    id: 6,
+    prize: '$50 Airbnb Credit',
+    emoji: '🏠',
+    tier: 'VOLUME',
+    entries: 41,
+    total: 75,
+    pct: 55,
+    time: '6h 0m',
+    price: 2,
+    accent: '#FF5A5F',
+    accentBg: '#FFF1F2',
+    hot: false,
+    featured: false,
+    desc: '$50 credit toward any Airbnb stay worldwide.',
+  },
+  {
+    id: 7,
+    prize: '$1,000 Expedia Voucher',
+    emoji: '✈️',
+    tier: 'MEGA',
+    entries: 312,
+    total: 1500,
+    pct: 21,
+    time: '6d 12h',
+    price: 2,
+    accent: '#6D28D9',
+    accentBg: '#F5F0FF',
+    hot: false,
+    featured: false,
+    desc: 'Travel anywhere with $1,000 to spend on Expedia flights & hotels.',
+  },
+  {
+    id: 8,
+    prize: '$500 Apple Store',
+    emoji: '🍎',
+    tier: 'MEGA',
+    entries: 498,
+    total: 750,
+    pct: 66,
+    time: '2d 4h',
+    price: 2,
+    accent: '#1A1A1A',
+    accentBg: '#F5F5F5',
+    hot: false,
+    featured: false,
+    desc: '$500 to spend at the Apple Store — iPhone, MacBook, AirPods.',
+  },
+]
+
+export const RECENT_WINNERS = [
+  { name: 'j***n', prize: '$50 Amazon Gift Card', timeAgo: '2 min ago' },
+  { name: 'm***e', prize: '$10 Xbox Gift Card', timeAgo: '8 min ago' },
+  { name: 's***h', prize: '$500 Amazon Voucher', timeAgo: '23 min ago' },
+  { name: 'r***a', prize: '$50 PlayStation Store', timeAgo: '1h ago' },
+  { name: 'k***l', prize: '$15 Netflix Gift Card', timeAgo: '1h 30m ago' },
+]
