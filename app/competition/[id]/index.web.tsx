@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -204,14 +204,51 @@ export default function CompetitionDetailWeb() {
                 <TouchableOpacity onPress={() => changeTickets(tickets - 1)} style={s.stepperBtn}>
                   <Text style={s.stepperText}>−</Text>
                 </TouchableOpacity>
-                <View style={s.sliderTrack}>
-                  <View style={[s.sliderFill, { width: `${sliderPct}%` as any }]} />
-                  <View style={[s.sliderThumb, { left: `${sliderPct}%` as any }]} />
-                </View>
+                <input
+                  type="range"
+                  min={1}
+                  max={maxTickets}
+                  value={tickets}
+                  onChange={(e: any) => changeTickets(parseInt(e.target.value))}
+                  style={{
+                    flex: 1,
+                    height: 6,
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    background: `linear-gradient(to right, ${Colors.primary} 0%, ${Colors.primary} ${sliderPct}%, #E5E7EB ${sliderPct}%, #E5E7EB 100%)`,
+                    borderRadius: 999,
+                    outline: 'none',
+                    cursor: 'pointer',
+                  } as any}
+                  className="winify-slider"
+                />
                 <TouchableOpacity onPress={() => changeTickets(tickets + 1)} style={s.stepperBtn}>
                   <Text style={s.stepperText}>+</Text>
                 </TouchableOpacity>
               </View>
+              {/* @ts-ignore */}
+              <style>{`
+                .winify-slider::-webkit-slider-thumb {
+                  -webkit-appearance: none;
+                  appearance: none;
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  background: #FFFFFF;
+                  border: 3px solid ${Colors.primary};
+                  cursor: pointer;
+                  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                }
+                .winify-slider::-moz-range-thumb {
+                  width: 20px;
+                  height: 20px;
+                  border-radius: 50%;
+                  background: #FFFFFF;
+                  border: 3px solid ${Colors.primary};
+                  cursor: pointer;
+                  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                }
+              `}</style>
 
               <TouchableOpacity
                 style={s.cta}
@@ -221,12 +258,9 @@ export default function CompetitionDetailWeb() {
               </TouchableOpacity>
 
               <View style={s.payIcons}>
-                <FontAwesome5 name="cc-visa" size={28} color="#1A1F71" brand />
-                <FontAwesome5 name="cc-mastercard" size={28} color="#EB001B" brand />
-                <FontAwesome5 name="cc-amex" size={28} color="#006FCF" brand />
-                <FontAwesome5 name="google-pay" size={28} color="#5F6368" brand />
-                <FontAwesome5 name="cc-paypal" size={28} color="#003087" brand />
-                <FontAwesome5 name="apple-pay" size={28} color="#000000" brand />
+                <FontAwesome5 name="apple-pay" size={34} color="#000000" brand />
+                <FontAwesome5 name="google-pay" size={34} color="#5F6368" brand />
+                <FontAwesome5 name="cc-visa" size={34} color="#1A1F71" brand />
               </View>
 
               {/* Countdown */}
