@@ -1,19 +1,31 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { Pool } from '@/lib/data'
 
+function isLight(hex: string) {
+  const c = hex.replace('#', '')
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+  return (r * 299 + g * 587 + b * 114) / 1000 > 170
+}
+
 export function ThumbnailCard({ pool }: { pool: Pool }) {
   const sold = pool.pct
   const isUrgent = sold > 70
+  const onLight = isLight(pool.bgColor)
+  const fg = onLight ? '#1A1A1A' : '#FFFFFF'
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => router.push(`/competition/${pool.id}`)}
       style={styles.card}
     >
-      <View style={[styles.thumb, { backgroundColor: pool.bgColor }]}>
-        <Image source={{ uri: pool.logo }} style={styles.logo} resizeMode="contain" />
+      <View style={[styles.thumb, { backgroundColor: pool.bgColor, borderBottomWidth: onLight ? 1 : 0, borderBottomColor: Colors.border }]}>
+        <Text style={styles.emoji}>{pool.emoji}</Text>
+        <Text style={[styles.brand, { color: fg }]} numberOfLines={1}>{pool.brand}</Text>
         <View style={styles.timePill}>
           <Text style={styles.timePillText}>⏱ {pool.time}</Text>
         </View>
@@ -65,8 +77,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    gap: 6,
   },
-  logo: { width: '70%', height: '70%' },
+  emoji: { fontSize: 56 },
+  brand: { fontSize: 16, fontWeight: '800', letterSpacing: -0.3 },
   timePill: {
     position: 'absolute',
     top: 8,
