@@ -16,6 +16,7 @@ export type Pool = {
   hot: boolean
   featured: boolean
   desc: string
+  gumroadUrl?: string
 }
 
 const cb = (domain: string) => `https://logo.clearbit.com/${domain}`
@@ -137,6 +138,25 @@ export const POOLS: Pool[] = [
     accent: '#107C10', accentBg: '#ECFDF5', hot: true, featured: false,
     desc: 'Xbox Series X console + Game Pass Ultimate for a year.' },
 ]
+
+// ─────────────────────────────────────────────────────────────
+// GUMROAD INTEGRATION
+// Replace DEFAULT_GUMROAD_URL with your real Gumroad product URL
+// (e.g. 'https://yourname.gumroad.com/l/winify-entry').
+// For per-competition products, add an entry to GUMROAD_URLS keyed
+// by pool id — these override the default.
+// ─────────────────────────────────────────────────────────────
+export const DEFAULT_GUMROAD_URL = 'https://gumroad.com/l/winify-entry'
+
+export const GUMROAD_URLS: Record<number, string> = {
+  // 1: 'https://yourname.gumroad.com/l/amazon500',
+  // 2: 'https://yourname.gumroad.com/l/xbox10',
+  // ...add per-pool product URLs here
+}
+
+export function getGumroadUrl(poolId: number): string {
+  return GUMROAD_URLS[poolId] ?? DEFAULT_GUMROAD_URL
+}
 
 export const RECENT_WINNERS = [
   { name: 'j***n', prize: '$50 Amazon Gift Card', timeAgo: '2 min ago' },

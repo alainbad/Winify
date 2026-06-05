@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Animated, ActivityIndicator, TextInput } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/theme'
-import { POOLS, Pool } from '@/lib/data'
+import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
 
 type CardTheme = {
   bg1: string; bg2: string; textColor: string;
@@ -75,10 +75,33 @@ export default function PaymentWeb() {
     )
   }
 
+  // Load Gumroad's overlay script once.
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    if (document.getElementById('gumroad-overlay-script')) return
+    const script = document.createElement('script')
+    script.id = 'gumroad-overlay-script'
+    script.src = 'https://gumroad.com/js/gumroad.js'
+    script.async = true
+    document.body.appendChild(script)
+  }, [])
+
   function handlePay() {
-    if (!agreed || loading) return
+    if (!agreed || loading || !pool) return
     setLoading(true)
-    setTimeout(() => router.push(`/competition/${id}/success`), 1500)
+
+    const url = getGumroadUrl(pool.id)
+    const successUrl = `${window.location.origin}/competition/${pool.id}/success`
+    const checkoutUrl = `${url}?wanted=true&referrer=winify&redirect_to=${encodeURIComponent(successUrl)}`
+
+    // Try the Gumroad overlay first; fall back to a redirect.
+    const w = window as any
+    if (w.GumroadOverlay && typeof w.GumroadOverlay.show === 'function') {
+      w.GumroadOverlay.show({ url: checkoutUrl })
+      setLoading(false)
+    } else {
+      window.location.href = checkoutUrl
+    }
   }
 
   const fee = pool.price.toFixed(2)
