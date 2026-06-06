@@ -102,6 +102,9 @@ function CountdownBox({ value, label }: { value: number; label: string }) {
   )
 }
 
+const SUPABASE_URL = 'https://dwjghqslnrkcjhaoaneq.supabase.co'
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3amdocXNsbnJrY2poYW9hbmVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NDM1NTgsImV4cCI6MjA5NjMxOTU1OH0.Q-q70ee0ViQpcPSTgRIe_-T6GorXrEo4uuc2dvb5UJE'
+
 export default function CompetitionDetailWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { width } = useWindowDimensions()
@@ -112,6 +115,14 @@ export default function CompetitionDetailWeb() {
   const [bundle, setBundle] = useState<number | null>(null)
   const [tickets, setTickets] = useState(1)
   const [secondsLeft, setSecondsLeft] = useState(() => pool ? parseTimeToSeconds(pool.time) : 86400)
+  const [winner, setWinner] = useState<any>(null)
+
+  useEffect(() => {
+    if (!id) return
+    fetch(`${SUPABASE_URL}/rest/v1/winners?pool_id=eq.${id}&select=*`, {
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
+    }).then(r => r.json()).then(data => { if (Array.isArray(data) && data.length > 0) setWinner(data[0]) })
+  }, [id])
 
   // Must be before any conditional return — Rules of Hooks
   const bundles = useMemo(() => {
@@ -195,6 +206,19 @@ export default function CompetitionDetailWeb() {
 
             {/* RIGHT: Purchase */}
             <View style={s.right}>
+              {winner && (
+                <View style={{ backgroundColor: '#F0FDF4', borderRadius: 14, padding: 20, marginBottom: 20, borderWidth: 1.5, borderColor: '#86EFAC' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <Text style={{ fontSize: 22 }}>🏆</Text>
+                    <Text style={{ fontSize: 16, fontWeight: '900', color: '#15803D' }}>Winner Drawn!</Text>
+                  </View>
+                  <Text style={{ fontSize: 14, color: '#166534', fontWeight: '700', marginBottom: 4 }}>{winner.winner_name || 'Anonymous'}</Text>
+                  <Text style={{ fontSize: 12, color: '#16A34A' }}>
+                    Ticket #{winner.random_index + 1} of {winner.total_entries} · {new Date(winner.drawn_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </Text>
+                  <Text style={{ fontSize: 11, color: '#4ADE80', marginTop: 6 }}>✓ Verified by RANDOM.ORG</Text>
+                </View>
+              )}
               <View style={s.pillsRow}>
                 <View style={s.pillPrimary}><Text style={s.pillPrimaryText}>${pool.price.toFixed(2)} per ticket</Text></View>
                 <View style={s.pillOutline}><Text style={s.pillOutlineText}>{pool.total.toLocaleString()} Pool Size</Text></View>
