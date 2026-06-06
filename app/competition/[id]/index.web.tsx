@@ -113,6 +113,17 @@ export default function CompetitionDetailWeb() {
   const [tickets, setTickets] = useState(1)
   const [secondsLeft, setSecondsLeft] = useState(() => pool ? parseTimeToSeconds(pool.time) : 86400)
 
+  // Must be before any conditional return — Rules of Hooks
+  const bundles = useMemo(() => {
+    if (!pool) return []
+    const maxPerUser = Math.min(pool.total, 50)
+    return [
+      { count: 1, label: '1' },
+      { count: 5, label: '5', tag: 'Most Popular' },
+      { count: 10, label: '10' },
+    ].filter(b => b.count <= maxPerUser)
+  }, [pool?.total])
+
   useEffect(() => {
     const t = setInterval(() => setSecondsLeft(s => Math.max(0, s - 1)), 1000)
     return () => clearInterval(t)
@@ -128,15 +139,6 @@ export default function CompetitionDetailWeb() {
       </View>
     )
   }
-
-  const bundles = useMemo(() => {
-    const maxPerUser = Math.min(pool.total, 50)
-    return [
-      { count: 1, label: '1' },
-      { count: 5, label: '5', tag: 'Most Popular' },
-      { count: 10, label: '10' },
-    ].filter(b => b.count <= maxPerUser)
-  }, [pool.total])
 
   const totalPrice = (tickets * pool.price).toFixed(2)
   const days = Math.floor(secondsLeft / 86400)
