@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView } from '
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
-import { dbInsert } from '@/lib/auth'
+import { dbQuery } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
@@ -57,7 +57,6 @@ export default function SuccessWeb() {
   const scale = useRef(new Animated.Value(0)).current
   const opacity = useRef(new Animated.Value(0)).current
   const [entryId, setEntryId] = useState<number | null>(null)
-  const saved = useRef(false)
 
   useEffect(() => {
     Animated.sequence([
@@ -70,16 +69,13 @@ export default function SuccessWeb() {
   }, [])
 
   useEffect(() => {
-    if (!user || !pool || saved.current) return
-    saved.current = true
-    dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session!.access_token)
+    if (!user || !pool) return
+    // Entry was already saved on payment page — just fetch the latest entry id
+    dbQuery(`entries?user_id=eq.${user.id}&pool_id=eq.${pool.id}&order=created_at.desc&limit=1`, session!.access_token)
       .then((data: any) => {
-        console.log('[success] dbInsert result:', JSON.stringify(data))
         const row = Array.isArray(data) ? data[0] : data
         if (row?.id) setEntryId(row.id)
-        else if (row?.code || row?.message) console.error('[success] insert error:', row)
-      })
-      .catch((e: any) => console.error('[success] insert failed:', e))
+      }).catch(() => {})
   }, [user, pool])
 
   const entryNum = entryId ? `#${entryId}` : `#E-${2000 + (pool?.id ?? 0)}`

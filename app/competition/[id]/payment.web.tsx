@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput,
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
+import { dbInsert } from '@/lib/auth'
+import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
 
@@ -87,6 +89,7 @@ export default function PaymentWeb() {
   const { width } = useWindowDimensions()
   const isMobile = width < 768
   const pool = POOLS.find(p => p.id === Number(id))
+  const { user, session } = useAuth()
   const [method, setMethod] = useState<PayMethod>('apple')
   const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -111,9 +114,14 @@ export default function PaymentWeb() {
     )
   }
 
-  function handlePay() {
+  async function handlePay() {
     if (!agreed || loading || !pool) return
     setLoading(true)
+    // Save entry before redirecting to Gumroad so it's recorded regardless of redirect
+    if (user && session) {
+      await dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session.access_token)
+        .catch(() => {})
+    }
     const url = getGumroadUrl(pool.id)
     const successUrl = `${window.location.origin}/competition/${pool.id}/success`
     const checkoutUrl = `${url}?wanted=true&referrer=tickpick&redirect_to=${encodeURIComponent(successUrl)}`
