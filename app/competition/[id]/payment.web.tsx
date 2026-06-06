@@ -133,7 +133,7 @@ export default function PaymentWeb() {
     <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
       <View style={s.topNav}>
         <View style={s.topNavInner}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace(`/competition/${id}`)}>
             <Text style={s.backLink}>← Back</Text>
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
