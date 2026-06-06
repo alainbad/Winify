@@ -137,34 +137,40 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
 // ─── Navbar ───────────────────────────────────────────────────────────────
 function Navbar() {
   const { user, loading } = useAuth()
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
   const initials = user?.user_metadata?.full_name
     ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
     : user?.email?.[0]?.toUpperCase() ?? ''
 
   return (
     <View style={styles.navbar}>
-      <View style={styles.navInner}>
+      <View style={[styles.navInner, isMobile && { paddingHorizontal: 16, paddingVertical: 12 }]}>
         <TouchableOpacity onPress={() => router.push('/')}>
-          <Text style={styles.navLogo}>Tick Pick</Text>
+          <Text style={[styles.navLogo, isMobile && { fontSize: 20 }]}>Tick Pick</Text>
         </TouchableOpacity>
-        <View style={styles.navLinks}>
-          {['Home', 'Browse', 'My Entries', 'Account'].map(link => (
-            <TouchableOpacity key={link} style={styles.navLinkBtn} onPress={() => router.push(
-              link === 'Home' ? '/' : link === 'Browse' ? '/browse' : link === 'My Entries' ? '/entries' : '/account'
-            )}>
-              <Text style={[styles.navLinkText, link === 'Browse' && styles.navLinkActive]}>{link}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {!isMobile && (
+          <View style={styles.navLinks}>
+            {['Home', 'Browse', 'My Entries', 'Account'].map(link => (
+              <TouchableOpacity key={link} style={styles.navLinkBtn} onPress={() => router.push(
+                link === 'Home' ? '/' : link === 'Browse' ? '/browse' : link === 'My Entries' ? '/entries' : '/account'
+              )}>
+                <Text style={[styles.navLinkText, link === 'Browse' && styles.navLinkActive]}>{link}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <View style={styles.navActions}>
           {!loading && !user && (
             <>
               <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/account')}>
                 <Text style={styles.loginBtnText}>Login</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/account')}>
-                <Text style={styles.signupBtnText}>Sign Up</Text>
-              </TouchableOpacity>
+              {!isMobile && (
+                <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/account')}>
+                  <Text style={styles.signupBtnText}>Sign Up</Text>
+                </TouchableOpacity>
+              )}
             </>
           )}
           {!loading && user && (
