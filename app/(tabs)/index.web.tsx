@@ -4,7 +4,21 @@ import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
 
-// Inline SVG brand icons — no CDN, no fonts, always works
+// Brandfetch CDN URLs — serve official brand logos (browser-accessible)
+const BRAND_CDN: Record<string, string> = {
+  'Amazon':      'https://cdn.brandfetch.io/idO_xJ7WH1/w/128/h/128',
+  'Xbox':        'https://cdn.brandfetch.io/idGsYZnhcu/w/128/h/128',
+  'Microsoft':   'https://cdn.brandfetch.io/idu208UKm2/w/128/h/128',
+  'Nintendo':    'https://cdn.brandfetch.io/idKT0Lk4f2/w/128/h/128',
+  'Disney+':     'https://cdn.brandfetch.io/idLXHpS_i5/w/128/h/128',
+  'Starbucks':   'https://cdn.brandfetch.io/idvxvYTAi6/w/128/h/128',
+  'Booking.com': 'https://cdn.brandfetch.io/idL0SzFHVz/w/128/h/128',
+  'Spotify':     'https://cdn.brandfetch.io/idNAkQJu9N/w/128/h/128',
+  'Apple':       'https://cdn.brandfetch.io/idJBc9nPEf/w/128/h/128',
+  'Google Play': 'https://cdn.brandfetch.io/idR_86WTRx/w/128/h/128',
+}
+
+// Inline SVG brand icons — no CDN, no fonts, always works as fallback
 // Single-path brands (from simple-icons)
 const BRAND_PATHS: Record<string, string> = {
   'Netflix': 'm5.398 0 8.348 23.602c2.346.059 4.856.398 4.856.398L10.113 0H5.398zm8.489 0v9.172l4.715 13.33V0h-4.715zM5.398 1.5V24c1.873-.225 2.81-.312 4.715-.398V14.83L5.398 1.5z',
@@ -46,6 +60,22 @@ const BRAND_SVG_HTML: Record<string, { inner: string; viewBox: string }> = {
 }
 
 function BrandIcon({ brand, color }: { brand: string; color: string }) {
+  const [cdnFailed, setCdnFailed] = useState(false)
+  const cdnUrl = BRAND_CDN[brand]
+
+  if (cdnUrl && !cdnFailed) {
+    return (
+      <img
+        src={cdnUrl}
+        width={64}
+        height={64}
+        alt={brand}
+        onError={() => setCdnFailed(true)}
+        style={{ display: 'block', objectFit: 'contain' } as any}
+      />
+    )
+  }
+
   const htmlIcon = BRAND_SVG_HTML[brand]
   if (htmlIcon) {
     return (
