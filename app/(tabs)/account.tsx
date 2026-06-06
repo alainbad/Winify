@@ -120,7 +120,7 @@ function AccountProfile() {
   const initials = user?.user_metadata?.full_name
     ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
     : (user?.email?.[0] ?? '?').toUpperCase()
-
+  const phone: string = user?.user_metadata?.phone || ''
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
     : ''
@@ -133,6 +133,7 @@ function AccountProfile() {
         </View>
         <Text style={styles.profileName}>{user?.user_metadata?.full_name ?? 'User'}</Text>
         <Text style={styles.profileEmail}>{user?.email}</Text>
+        {!!phone && <Text style={styles.profileEmail}>📱 {phone}</Text>}
         {!!memberSince && <Text style={styles.profileMember}>Member since {memberSince}</Text>}
       </View>
 

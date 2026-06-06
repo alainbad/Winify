@@ -110,6 +110,7 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
 
   const name: string = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
   const email: string = user?.email || ''
+  const phone: string = user?.user_metadata?.phone || ''
   const initials = name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
   const memberSince = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
@@ -153,7 +154,8 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 22, fontWeight: '800', color: Colors.text, marginBottom: 4 }}>{name}</Text>
-              <Text style={{ fontSize: 14, color: Colors.textSec, marginBottom: 4 }}>{email}</Text>
+              <Text style={{ fontSize: 14, color: Colors.textSec, marginBottom: 2 }}>{email}</Text>
+              {!!phone && <Text style={{ fontSize: 14, color: Colors.textSec, marginBottom: 2 }}>📱 {phone}</Text>}
               {!!memberSince && <Text style={{ fontSize: 12, color: Colors.muted }}>Member since {memberSince}</Text>}
             </View>
           </View>

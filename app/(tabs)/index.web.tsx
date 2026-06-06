@@ -160,7 +160,7 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
 function Navbar() {
   const { width } = useWindowDimensions()
   const isMobile = width < 768
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const initials = user?.user_metadata?.full_name
     ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
     : user?.email?.[0]?.toUpperCase() ?? ''
@@ -183,14 +183,14 @@ function Navbar() {
           </View>
         )}
         <View style={styles.navActions}>
-          {user ? (
+          {!loading && user ? (
             <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/(tabs)/account')}>
               <View style={styles.profileAvatar}>
                 <Text style={styles.profileInitials}>{initials}</Text>
               </View>
               {!isMobile && <Text style={styles.profileName}>{user.user_metadata?.full_name?.split(' ')[0] ?? 'Account'}</Text>}
             </TouchableOpacity>
-          ) : (
+          ) : !loading ? (
             <>
               <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(tabs)/account')}>
                 <Text style={styles.loginBtnText}>Login</Text>
@@ -201,7 +201,7 @@ function Navbar() {
                 </TouchableOpacity>
               )}
             </>
-          )}
+          ) : null}
         </View>
       </View>
     </View>
