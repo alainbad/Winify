@@ -204,7 +204,7 @@ export default function CompetitionDetailWeb() {
                   return (
                     <TouchableOpacity key={b.count} onPress={() => pickBundle(b.count)} style={[s.bundleBtn, active && s.bundleBtnActive]}>
                       <Text style={[s.bundleNum, active && { color: Colors.primary }]}>{b.label}</Text>
-                      <FontAwesome5 name="ticket-alt" size={11} color={active ? Colors.primary : Colors.textSec} />
+                      <Text style={{ fontSize: 11, color: active ? Colors.primary : Colors.textSec }}>🎟</Text>
                       {b.tag && (
                         <View style={s.bundleTag}><Text style={s.bundleTagText}>{b.tag}</Text></View>
                       )}
@@ -216,7 +216,7 @@ export default function CompetitionDetailWeb() {
               <TouchableOpacity><Text style={s.freeEntry}>Free Postal Entry*</Text></TouchableOpacity>
 
               <View style={s.ticketCounter}>
-                <FontAwesome5 name="ticket-alt" size={14} color={Colors.primary} />
+                <Text style={{ fontSize: 14 }}>🎟</Text>
                 <Text style={s.ticketCounterText}>{tickets} Ticket{tickets > 1 ? 's' : ''}</Text>
               </View>
 
@@ -278,9 +278,9 @@ export default function CompetitionDetailWeb() {
               </TouchableOpacity>
 
               <View style={s.payIcons}>
-                <FontAwesome5 name="apple-pay" size={34} color="#000000" brand />
-                <FontAwesome5 name="google-pay" size={34} color="#5F6368" brand />
-                <FontAwesome5 name="cc-visa" size={34} color="#1A1F71" brand />
+                <img src={`https://img.logo.dev/apple.com?token=${LOGO_DEV_TOKEN}&size=64&format=png`} height={28} alt="Apple Pay" style={{ objectFit: 'contain' } as any} />
+                <img src={`https://img.logo.dev/google.com?token=${LOGO_DEV_TOKEN}&size=64&format=png`} height={28} alt="Google Pay" style={{ objectFit: 'contain' } as any} />
+                <img src={`https://img.logo.dev/visa.com?token=${LOGO_DEV_TOKEN}&size=64&format=png`} height={28} alt="Visa" style={{ objectFit: 'contain' } as any} />
               </View>
 
               {/* Countdown */}
@@ -305,17 +305,17 @@ export default function CompetitionDetailWeb() {
               {/* Info boxes */}
               <View style={s.infoBoxes}>
                 <View style={s.infoBox}>
-                  <FontAwesome5 name="users" size={16} color={Colors.primary} />
+                  <Text style={{ fontSize: 16 }}>👥</Text>
                   <Text style={s.infoBoxValue}>{Math.min(50, pool.total)}</Text>
                   <Text style={s.infoBoxLabel}>max tickets pp</Text>
                 </View>
                 <View style={s.infoBox}>
-                  <FontAwesome5 name="calendar-alt" size={16} color={Colors.primary} />
+                  <Text style={{ fontSize: 16 }}>📅</Text>
                   <Text style={s.infoBoxValue}>Draw date</Text>
                   <Text style={s.infoBoxLabel}>{pool.time}</Text>
                 </View>
                 <View style={s.infoBox}>
-                  <FontAwesome5 name="ticket-alt" size={16} color={Colors.primary} />
+                  <Text style={{ fontSize: 16 }}>🎟</Text>
                   <Text style={s.infoBoxValue}>{pool.total.toLocaleString()}</Text>
                   <Text style={s.infoBoxLabel}>total tickets</Text>
                 </View>
@@ -334,7 +334,7 @@ export default function CompetitionDetailWeb() {
                   </Text>
                 </View>
                 <View style={s.bonusTimer}>
-                  <FontAwesome5 name="clock" size={11} color={Colors.primary} />
+                  <Text style={{ fontSize: 11 }}>⏱</Text>
                   <Text style={s.bonusTimerText}>{days}d : {String(hours).padStart(2,'0')}h : {String(mins).padStart(2,'0')}m : {String(secs).padStart(2,'0')}s</Text>
                 </View>
               </View>
