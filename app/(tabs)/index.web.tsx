@@ -264,7 +264,7 @@ function Hero({ featured }: { featured: Pool }) {
             <View style={styles.liveDotGreen} />
             <Text style={styles.heroBadgeText}>38 live competitions right now</Text>
           </View>
-          <Text style={[styles.heroHeadline, isMobile && { fontSize: 42, lineHeight: 48 }]}>Win Big{'\n'}for Just $2</Text>
+          <Text style={[styles.heroHeadline, isMobile && { fontSize: 42, lineHeight: 48 }]}>Win Big{'\n'}for Just $5</Text>
           <Text style={styles.heroSubtext}>
             Enter premium prize draws with a single ticket. Every draw is provably fair,
             powered by RANDOM.ORG. Winners paid instantly.
@@ -411,7 +411,7 @@ function HowItWorks() {
   const isMobile = width < 768
   const steps = [
     { icon: '🎯', title: 'Pick a Competition', desc: 'Browse hundreds of live prize draws. From $10 gift cards to $1,000 vouchers.' },
-    { icon: '🎟️', title: 'Enter for $2', desc: 'One flat price, no hidden fees. Every ticket gives you a fair shot at winning.' },
+    { icon: '🎟️', title: 'Enter for $5', desc: 'One flat price, no hidden fees. Every ticket gives you a fair shot at winning.' },
     { icon: '🎲', title: 'Fair Draw', desc: 'When tickets sell out, a winner is picked by RANDOM.ORG — provably fair every time.' },
     { icon: '🏆', title: 'Claim Your Prize', desc: 'Winners are notified instantly and prizes delivered within 24 hours.' },
   ]

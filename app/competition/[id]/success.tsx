@@ -59,7 +59,7 @@ export default function SuccessScreen() {
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailKey}>Amount paid</Text>
-            <Text style={styles.detailVal}>$2.00</Text>
+            <Text style={styles.detailVal}>$5.00</Text>
           </View>
         </View>
       </View>

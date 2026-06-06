@@ -302,7 +302,7 @@ function Sidebar({
       {/* Trust */}
       <View style={styles.sideTrust}>
         <Text style={styles.sideTrustTitle}>Why Tick Pick?</Text>
-        {['✓ RANDOM.ORG verified draws', '✓ Instant prize delivery', '✓ 12,400+ winners', '✓ £2 flat entry fee'].map(t => (
+        {['✓ RANDOM.ORG verified draws', '✓ Instant prize delivery', '✓ 12,400+ winners', '✓ $5 flat entry fee'].map(t => (
           <Text key={t} style={styles.sideTrustItem}>{t}</Text>
         ))}
       </View>

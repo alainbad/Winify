@@ -78,7 +78,7 @@ export default function CompetitionDetailScreen() {
             <Text style={styles.cardTitle}>How It Works</Text>
             {[
               { n: 1, t: 'Answer a skill question', d: 'A simple question to confirm you\'re a real person.' },
-              { n: 2, t: 'Pay the $2 entry fee', d: 'Secure payment via Apple Pay or card.' },
+              { n: 2, t: 'Pay the $5 entry fee', d: 'Secure payment via Apple Pay or card.' },
               { n: 3, t: 'Wait for the draw', d: `Pool closes in ${pool.time} when all ${pool.total} spots fill.` },
               { n: 4, t: 'Winner picked by RANDOM.ORG', d: 'Tamper-proof, independently verified draw.' },
             ].map(s => (

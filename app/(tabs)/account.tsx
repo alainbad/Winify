@@ -142,7 +142,7 @@ function AccountProfile() {
         {[
           { n: '1', t: 'Browse competitions', d: 'Find a prize pool you like.' },
           { n: '2', t: 'Answer a skill question', d: 'Prove you\'re human — no bots!' },
-          { n: '3', t: 'Pay $2 entry fee', d: 'Secure payment via Gumroad.' },
+          { n: '3', t: 'Pay $5 entry fee', d: 'Secure payment via Gumroad.' },
           { n: '4', t: 'Wait for the draw', d: 'RANDOM.ORG picks the winner.' },
         ].map(s => (
           <View key={s.n} style={styles.howStep}>

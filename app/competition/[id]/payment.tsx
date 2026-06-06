@@ -47,13 +47,13 @@ export default function PaymentScreen() {
               <Text style={styles.orderPrize} numberOfLines={1}>{pool.prize}</Text>
               <Text style={styles.orderMeta}>1 × entry · {pool.entries + 1}/{pool.total} entries</Text>
             </View>
-            <Text style={styles.orderPrice}>$2.00</Text>
+            <Text style={styles.orderPrice}>$5.00</Text>
           </View>
         )}
         <View style={styles.orderDivider} />
         <View style={[styles.orderRow, { marginBottom: 0 }]}>
           <Text style={styles.orderTotal}>Total</Text>
-          <Text style={[styles.orderPrice, { fontSize: 18, fontWeight: '800' }]}>$2.00</Text>
+          <Text style={[styles.orderPrice, { fontSize: 18, fontWeight: '800' }]}>$5.00</Text>
         </View>
       </View>
 
@@ -95,7 +95,7 @@ export default function PaymentScreen() {
         {state === 'loading' ? (
           <ActivityIndicator color="white" size="small" />
         ) : (
-          <Text style={styles.payBtnText}>Confirm & Pay $2.00</Text>
+          <Text style={styles.payBtnText}>Confirm & Pay $5.00</Text>
         )}
       </TouchableOpacity>
 
