@@ -121,12 +121,13 @@ export default function PaymentWeb() {
     const checkoutUrl = `${url}?wanted=true&referrer=tickpick`
     // Open Gumroad immediately (must be synchronous to avoid popup blocker)
     window.open(checkoutUrl, '_blank')
-    // Save entry and navigate to success in background
+    // Save entry in background
     if (user && session) {
       dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session.access_token)
         .catch(() => {})
     }
-    router.replace(`/competition/${pool.id}/success`)
+    // Navigate to success page
+    window.location.href = `/competition/${pool.id}/success`
   }
 
   const fee = pool.price.toFixed(2)
