@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, useWindowDimensions } from 'react-native'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
@@ -327,6 +327,9 @@ function Sidebar({
 
 // ─── Main Browse Page ─────────────────────────────────────────────────────
 export default function BrowseWebScreen() {
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
+
   const [tier, setTier] = useState<Tier>('All')
   const [sort, setSort] = useState<SortOpt>('Ending Soon')
   const [search, setSearch] = useState('')
@@ -355,27 +358,42 @@ export default function BrowseWebScreen() {
       <Navbar />
 
       {/* Page Header */}
-      <View style={styles.pageHeader}>
+      <View style={[styles.pageHeader, isMobile && { paddingVertical: 28 }]}>
         <View style={styles.pageHeaderInner}>
-          <Text style={styles.pageTitle}>Browse Competitions</Text>
+          <Text style={[styles.pageTitle, isMobile && { fontSize: 26 }]}>Browse Competitions</Text>
           <Text style={styles.pageSubtitle}>{POOLS.length} live draws — new competitions added daily</Text>
         </View>
       </View>
 
+      {/* Mobile tier filter chips */}
+      {isMobile && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: Colors.border }}
+          contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 10, gap: 8, flexDirection: 'row' }}>
+          {(['All', 'MICRO', 'VOLUME', 'MEGA'] as Tier[]).map(t => (
+            <TouchableOpacity key={t} onPress={() => setTier(t)}
+              style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: tier === t ? Colors.primary : Colors.bg, borderWidth: 1, borderColor: tier === t ? Colors.primary : Colors.border }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: tier === t ? '#fff' : Colors.textSec }}>{t === 'All' ? 'All' : `${t} Draws`}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
       {/* Main Layout */}
-      <View style={styles.mainLayout}>
-        <View style={styles.mainInner}>
-          {/* Sidebar */}
-          <Sidebar
-            tier={tier} onTier={setTier}
-            sort={sort} onSort={setSort}
-            brands={allBrands} activeBrands={activeBrands} onBrand={toggleBrand}
-          />
+      <View style={[styles.mainLayout, isMobile && { paddingVertical: 16, paddingHorizontal: 12 }]}>
+        <View style={[styles.mainInner, isMobile && { flexDirection: 'column' }]}>
+          {/* Sidebar — desktop only */}
+          {!isMobile && (
+            <Sidebar
+              tier={tier} onTier={setTier}
+              sort={sort} onSort={setSort}
+              brands={allBrands} activeBrands={activeBrands} onBrand={toggleBrand}
+            />
+          )}
 
           {/* Content */}
           <View style={styles.content}>
             {/* Search + results count */}
-            <View style={styles.contentHeader}>
+            <View style={[styles.contentHeader, isMobile && { flexDirection: 'column', gap: 8 }]}>
               <View style={styles.searchBox}>
                 <Text style={styles.searchIcon}>🔍</Text>
                 <TextInput
@@ -426,9 +444,9 @@ export default function BrowseWebScreen() {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={styles.grid}>
+              <View style={[styles.grid, isMobile && { marginHorizontal: -6 }]}>
                 {pools.map(p => (
-                  <View key={p.id} style={styles.gridItem}>
+                  <View key={p.id} style={[styles.gridItem, isMobile && { width: '50%', paddingHorizontal: 6 }]}>
                     <CompCard pool={p} />
                   </View>
                 ))}
@@ -441,7 +459,7 @@ export default function BrowseWebScreen() {
       {/* Footer */}
       <View style={styles.footer}>
         <View style={styles.footerInner}>
-          <View style={styles.footerBottom}>
+          <View style={[styles.footerBottom, isMobile && { flexDirection: 'column', gap: 8, alignItems: 'flex-start' }]}>
             <Text style={styles.footerLogo}>Tick Pick</Text>
             <Text style={styles.footerCopy}>© 2026 Tick Pick. All rights reserved. Competitions are open to users aged 18+.</Text>
           </View>
