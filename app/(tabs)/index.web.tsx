@@ -13,7 +13,7 @@ const BRAND_DOMAINS: Record<string, string> = {
   'Steam':       'steampowered.com',
   'Spotify':     'spotify.com',
   'Roblox':      'roblox.com',
-  'Google Play': 'play.google.com',
+  // Google Play omitted — logo.dev returns the Google G, not the Play triangle
   'Apple':       'apple.com',
   'Uber Eats':   'ubereats.com',
   'Starbucks':   'starbucks.com',
@@ -118,7 +118,7 @@ type CardTheme = {
 // svg = use simpleicons CDN via CSS backgroundImage (for brands not in FA5/MCI)
 const CARD_THEMES: Record<string, CardTheme> = {
   'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF' },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF' },
+  'Xbox':        { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#107C10' },
   'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914' },
   'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF' },
   'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954' },
