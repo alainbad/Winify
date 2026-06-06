@@ -4,7 +4,29 @@ import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
 
-// Inline SVG brand icons — no CDN, no fonts, always works
+const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
+
+const BRAND_DOMAINS: Record<string, string> = {
+  'Amazon':      'amazon.com',
+  'Xbox':        'xbox.com',
+  'Netflix':     'netflix.com',
+  'Steam':       'steampowered.com',
+  'Spotify':     'spotify.com',
+  'Roblox':      'roblox.com',
+  'Google Play': 'play.google.com',
+  'Apple':       'apple.com',
+  'Uber Eats':   'ubereats.com',
+  'Starbucks':   'starbucks.com',
+  'PlayStation': 'playstation.com',
+  'Microsoft':   'microsoft.com',
+  'Booking.com': 'booking.com',
+  'Airbnb':      'airbnb.com',
+  'Nintendo':    'nintendo.com',
+  'Disney+':     'disneyplus.com',
+  'Expedia':     'expedia.com',
+}
+
+
 // Single-path brands (from simple-icons)
 const BRAND_PATHS: Record<string, string> = {
   'Netflix': 'm5.398 0 8.348 23.602c2.346.059 4.856.398 4.856.398L10.113 0H5.398zm8.489 0v9.172l4.715 13.33V0h-4.715zM5.398 1.5V24c1.873-.225 2.81-.312 4.715-.398V14.83L5.398 1.5z',
@@ -52,18 +74,32 @@ const BRAND_SVG_HTML: Record<string, { inner: string; viewBox: string }> = {
 }
 
 function BrandIcon({ brand, color }: { brand: string; color: string }) {
-  const htmlIcon = BRAND_SVG_HTML[brand]
-  if (htmlIcon) {
+  const [logoFailed, setLogoFailed] = useState(false)
+  const domain = BRAND_DOMAINS[brand]
+
+  if (domain && !logoFailed) {
+    const src = `https://img.logo.dev/${domain}?token=${LOGO_DEV_TOKEN}&size=128&format=png`
     return (
-      <svg
-        viewBox={htmlIcon.viewBox}
+      <img
+        src={src}
         width={64}
         height={64}
-        style={{ display: 'block' } as any}
-        dangerouslySetInnerHTML={{ __html: htmlIcon.inner }}
+        alt={brand}
+        onError={() => setLogoFailed(true)}
+        style={{ display: 'block', objectFit: 'contain' } as any}
       />
     )
   }
+
+  // Fallback: hand-crafted multi-element SVG
+  const htmlIcon = BRAND_SVG_HTML[brand]
+  if (htmlIcon) {
+    return (
+      <svg viewBox={htmlIcon.viewBox} width={64} height={64} style={{ display: 'block' } as any}
+        dangerouslySetInnerHTML={{ __html: htmlIcon.inner }} />
+    )
+  }
+  // Fallback: simple-icons single path
   const path = BRAND_PATHS[brand]
   if (!path) {
     return <Text style={{ fontSize: 40, fontWeight: '900', color, opacity: 0.9 }}>{brand.charAt(0)}</Text>
