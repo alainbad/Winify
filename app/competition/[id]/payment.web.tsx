@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput, useWindowDimensions } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput, ScrollView, useWindowDimensions } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
@@ -130,7 +130,7 @@ export default function PaymentWeb() {
   const iconColor = (m: PayMethod) => method === m ? Colors.primary : Colors.textSec
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
+    <ScrollView style={{ flex: 1, backgroundColor: '#FAFAFA' }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <View style={s.topNav}>
         <View style={s.topNavInner}>
           <TouchableOpacity onPress={() => router.back()}>
@@ -277,7 +277,7 @@ export default function PaymentWeb() {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
