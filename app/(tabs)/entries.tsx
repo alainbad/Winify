@@ -18,12 +18,14 @@ function EntryCard({ entry, pool }: { entry: Entry; pool: typeof POOLS[0] }) {
           <Text style={{ fontSize: 24 }}>{pool.emoji}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.entryPrize} numberOfLines={1}>{pool.prize}</Text>
-          <Text style={styles.entryMeta}>Entry #{entry.id} · ${Number(entry.amount_paid).toFixed(2)} paid · {date}</Text>
-        </View>
-        <View style={styles.activeBadge}>
-          <View style={styles.activeDot} />
-          <Text style={styles.activeText}>Active</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <Text style={[styles.entryPrize, { flex: 1, marginRight: 8 }]} numberOfLines={2}>{pool.prize}</Text>
+            <View style={styles.activeBadge}>
+              <View style={styles.activeDot} />
+              <Text style={styles.activeText}>Active</Text>
+            </View>
+          </View>
+          <Text style={styles.entryMeta}>Entry #{entry.id} · ${Number(entry.amount_paid).toFixed(2)} · {date}</Text>
         </View>
       </View>
       <View style={{ marginBottom: 8 }}>
