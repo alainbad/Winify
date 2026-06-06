@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
+import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
 
@@ -128,10 +129,6 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
       <View style={styles.giftCircle1} />
       <View style={styles.giftCircle2} />
       <BrandIcon brand={pool.brand} color={theme.textColor} />
-      <Text style={[styles.giftBrandName, { color: theme.textColor }]}>{pool.brand}</Text>
-      <View style={styles.giftLabel}>
-        <Text style={styles.giftLabelText}>GIFT CARD</Text>
-      </View>
       {children}
     </View>
   )
@@ -139,6 +136,11 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
 
 // ─── Navbar ───────────────────────────────────────────────────────────────
 function Navbar() {
+  const { user, loading } = useAuth()
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+    : user?.email?.[0]?.toUpperCase() ?? ''
+
   return (
     <View style={styles.navbar}>
       <View style={styles.navInner}>
@@ -146,19 +148,32 @@ function Navbar() {
           <Text style={styles.navLogo}>Tick Pick</Text>
         </TouchableOpacity>
         <View style={styles.navLinks}>
-          {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
-            <TouchableOpacity key={link} style={styles.navLinkBtn}>
+          {['Home', 'Browse', 'My Entries', 'Account'].map(link => (
+            <TouchableOpacity key={link} style={styles.navLinkBtn} onPress={() => router.push(
+              link === 'Home' ? '/' : link === 'Browse' ? '/browse' : link === 'My Entries' ? '/entries' : '/account'
+            )}>
               <Text style={[styles.navLinkText, link === 'Browse' && styles.navLinkActive]}>{link}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View style={styles.navActions}>
-          <TouchableOpacity style={styles.loginBtn}>
-            <Text style={styles.loginBtnText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.signupBtn}>
-            <Text style={styles.signupBtnText}>Sign Up</Text>
-          </TouchableOpacity>
+          {!loading && !user && (
+            <>
+              <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/account')}>
+                <Text style={styles.loginBtnText}>Login</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/account')}>
+                <Text style={styles.signupBtnText}>Sign Up</Text>
+              </TouchableOpacity>
+            </>
+          )}
+          {!loading && user && (
+            <TouchableOpacity onPress={() => router.push('/account')} style={styles.profileBtn}>
+              <View style={styles.profileAvatar}>
+                <Text style={styles.profileInitials}>{initials}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -455,6 +470,9 @@ const styles = StyleSheet.create({
   loginBtnText: { fontSize: 14, fontWeight: '600', color: Colors.primary },
   signupBtn: { paddingHorizontal: 20, paddingVertical: 9, backgroundColor: Colors.primary, borderRadius: 8 },
   signupBtnText: { fontSize: 14, fontWeight: '600', color: '#FFFFFF' },
+  profileBtn: { padding: 2 },
+  profileAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  profileInitials: { fontSize: 13, fontWeight: '800', color: '#FFFFFF' },
 
   // Page header
   pageHeader: { backgroundColor: Colors.primaryDark, paddingVertical: 48, paddingHorizontal: 20 },
