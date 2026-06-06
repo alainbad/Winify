@@ -177,11 +177,14 @@ export default function CompetitionDetailWeb() {
         </View>
       </View>
 
+      <View style={{ paddingHorizontal: 32, paddingTop: 16 }}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.backBtn}>
+          <Text style={s.backArrow}>←</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
         <View style={s.page}>
-          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.backBtn}>
-            <Text style={s.backArrow}>←</Text>
-          </TouchableOpacity>
 
           {/* Two-column */}
           <View style={s.grid}>
@@ -367,7 +370,7 @@ const s = StyleSheet.create({
   brandName: { fontSize: 18, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.4 },
   navItem: { fontSize: 13, fontWeight: '700', color: '#FFFFFF' },
   page: { maxWidth: 1200, width: '100%', alignSelf: 'center', paddingHorizontal: 32, paddingTop: 24 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginBottom: 16, zIndex: 10, cursor: 'pointer' as any },
   backArrow: { fontSize: 18, color: Colors.primary, fontWeight: '700' },
   grid: { flexDirection: 'row', flexWrap: 'wrap' as any, gap: 40, alignItems: 'flex-start' },
   left: { alignItems: 'center', width: '100%' as any, maxWidth: 520 },
