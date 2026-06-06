@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput, ScrollView, useWindowDimensions } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
-import { POOLS, Pool, getPayhipUrl } from '@/lib/data'
+import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
 import { dbInsert } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
@@ -107,8 +107,8 @@ export default function PaymentWeb() {
   function handlePay() {
     if (!agreed || loading || !pool) return
     setLoading(true)
-    const checkoutUrl = getPayhipUrl(pool.id)
-    // Open Payhip immediately (must be synchronous to avoid popup blocker)
+    const checkoutUrl = `${getGumroadUrl(pool.id)}?wanted=true&referrer=tickpick`
+    // Open Gumroad immediately (must be synchronous to avoid popup blocker)
     window.open(checkoutUrl, '_blank')
     // Save entry in background
     if (user && session) {
