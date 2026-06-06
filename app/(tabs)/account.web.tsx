@@ -1,90 +1,99 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView } from 'react-native'
 import { Colors } from '@/constants/theme'
 import { signUp, signIn, signOut, dbQuery } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
 function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  async function handleSubmit() {
+  async function handleSubmit(e: any) {
+    e.preventDefault()
+    const form = e.target as HTMLFormElement
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim()
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value
+    const name = mode === 'signup' ? (form.elements.namedItem('name') as HTMLInputElement)?.value.trim() ?? '' : ''
+
     setError('')
     setSuccess('')
-    if (!email.trim() || !password) { setError('Please enter your email and password.'); return }
+    if (!email || !password) { setError('Please enter your email and password.'); return }
     if (mode === 'signup' && password.length < 6) { setError('Password must be at least 6 characters.'); return }
-    setLoading(true)
 
+    setLoading(true)
     if (mode === 'signup') {
-      const { session, error } = await signUp(email.trim(), password, name.trim())
-      if (error) {
-        setError(error)
-      } else if (session) {
-        onSuccess()
-      } else {
-        setSuccess('Account created! Check your email to confirm, then sign in.')
-      }
+      const { session, error } = await signUp(email, password, name)
+      if (error) setError(error)
+      else if (session) onSuccess()
+      else setSuccess('Account created! Check your email to confirm, then sign in.')
     } else {
-      const { session, error } = await signIn(email.trim(), password)
-      if (error) {
-        setError(error)
-      } else if (session) {
-        onSuccess()
-      }
+      const { session, error } = await signIn(email, password)
+      if (error) setError(error)
+      else if (session) onSuccess()
     }
     setLoading(false)
   }
 
+  const css = `
+    .auth-wrap { display:flex; align-items:center; justify-content:center; min-height:80vh; background:#F9FAFB; padding:24px; }
+    .auth-card { width:100%; max-width:400px; background:#fff; border:1px solid #E5E7EB; border-radius:16px; padding:28px; }
+    .auth-logo { font-size:15px; font-weight:900; color:#7C3AED; margin-bottom:20px; }
+    .auth-heading { font-size:22px; font-weight:800; color:#111827; margin-bottom:4px; }
+    .auth-sub { font-size:13px; color:#6B7280; margin-bottom:22px; }
+    .auth-field { margin-bottom:14px; }
+    .auth-label { display:block; font-size:11px; font-weight:700; color:#6B7280; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px; }
+    .auth-input { width:100%; box-sizing:border-box; border:1px solid #E5E7EB; border-radius:8px; padding:11px 12px; font-size:14px; color:#111827; background:#FAFAFA; outline:none; font-family:inherit; }
+    .auth-input:focus { border-color:#7C3AED; background:#fff; }
+    .auth-btn { width:100%; background:#7C3AED; color:#fff; border:none; border-radius:10px; padding:13px; font-size:14px; font-weight:800; cursor:pointer; margin-top:6px; margin-bottom:16px; font-family:inherit; }
+    .auth-btn:hover { background:#6D28D9; }
+    .auth-btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .auth-switch { font-size:13px; color:#6B7280; text-align:center; cursor:pointer; background:none; border:none; font-family:inherit; width:100%; }
+    .auth-switch span { color:#7C3AED; font-weight:700; }
+    .auth-error { background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#DC2626; }
+    .auth-success { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#16A34A; }
+  `
+
   return (
-    <View style={f.wrap}>
-      <View style={f.card}>
-        <Text style={f.logo}>● Tick Pick</Text>
-        <Text style={f.heading}>{mode === 'login' ? 'Welcome back' : 'Create account'}</Text>
-        <Text style={f.sub}>{mode === 'login' ? 'Sign in to track your entries' : 'Join to start entering competitions'}</Text>
+    <View style={{ flex: 1 }}>
+      <style dangerouslySetInnerHTML={{ __html: css }} />
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="auth-logo">● Tick Pick</div>
+          <div className="auth-heading">{mode === 'login' ? 'Welcome back' : 'Create account'}</div>
+          <div className="auth-sub">{mode === 'login' ? 'Sign in to track your entries' : 'Join to start entering competitions'}</div>
 
-        {mode === 'signup' && (
-          <View style={f.field}>
-            <Text style={f.label}>Full name</Text>
-            <TextInput style={f.input} placeholder="Your name" placeholderTextColor={Colors.muted}
-              value={name} onChangeText={setName} autoCapitalize="words" />
-          </View>
-        )}
+          <form onSubmit={handleSubmit}>
+            {mode === 'signup' && (
+              <div className="auth-field">
+                <label className="auth-label" htmlFor="name">Full name</label>
+                <input className="auth-input" id="name" name="name" type="text" placeholder="Your name" autoComplete="name" />
+              </div>
+            )}
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="email">Email</label>
+              <input className="auth-input" id="email" name="email" type="email" placeholder="you@example.com" autoComplete="email" required />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label" htmlFor="password">Password{mode === 'signup' ? ' (min 6 chars)' : ''}</label>
+              <input className="auth-input" id="password" name="password" type="password" placeholder="••••••••" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required />
+            </div>
 
-        <View style={f.field}>
-          <Text style={f.label}>Email</Text>
-          <TextInput style={f.input} placeholder="you@example.com" placeholderTextColor={Colors.muted}
-            value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-        </View>
+            {error ? <div className="auth-error">{error}</div> : null}
+            {success ? <div className="auth-success">{success}</div> : null}
 
-        <View style={f.field}>
-          <Text style={f.label}>Password{mode === 'signup' ? ' (min 6 characters)' : ''}</Text>
-          <TextInput style={f.input} placeholder="••••••••" placeholderTextColor={Colors.muted}
-            value={password} onChangeText={setPassword} secureTextEntry
-            onSubmitEditing={handleSubmit} returnKeyType="go" />
-        </View>
+            <button className="auth-btn" type="submit" disabled={loading}>
+              {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
+            </button>
+          </form>
 
-        {!!error && <View style={f.errorBox}><Text style={f.errorText}>{error}</Text></View>}
-        {!!success && <View style={f.successBox}><Text style={f.successText}>{success}</Text></View>}
-
-        <TouchableOpacity style={[f.btn, loading && { opacity: 0.6 }]} onPress={handleSubmit} disabled={loading}>
-          {loading
-            ? <ActivityIndicator color="#fff" size="small" />
-            : <Text style={f.btnText}>{mode === 'login' ? 'Sign In' : 'Create Account'}</Text>
-          }
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError(''); setSuccess('') }}>
-          <Text style={f.switchText}>
+          <button className="auth-switch" type="button" onClick={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError(''); setSuccess('') }}>
             {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-            <Text style={{ color: Colors.primary, fontWeight: '700' }}>{mode === 'login' ? 'Sign up' : 'Sign in'}</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <span>{mode === 'login' ? 'Sign up' : 'Sign in'}</span>
+          </button>
+        </div>
+      </div>
     </View>
   )
 }
@@ -104,7 +113,7 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
   useEffect(() => {
     if (!user || !session) return
     dbQuery(`entries?user_id=eq.${user.id}&select=id`, session.access_token)
-      .then((data: any[]) => setEntryCount(Array.isArray(data) ? data.length : 0))
+      .then((data: any) => setEntryCount(Array.isArray(data) ? data.length : 0))
       .catch(() => {})
   }, [user])
 
@@ -184,24 +193,6 @@ export default function AccountWeb() {
     ? <AccountProfile onSignOut={refresh} />
     : <AuthForm onSuccess={refresh} />
 }
-
-const f = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: '#F9FAFB', alignItems: 'center', justifyContent: 'center', padding: 24, minHeight: 500 },
-  card: { width: '100%', maxWidth: 400, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 16, padding: 28 },
-  logo: { fontSize: 15, fontWeight: '900', color: Colors.primary, marginBottom: 20 },
-  heading: { fontSize: 22, fontWeight: '800', color: Colors.text, marginBottom: 4 },
-  sub: { fontSize: 13, color: Colors.textSec, marginBottom: 22 },
-  field: { marginBottom: 14 },
-  label: { fontSize: 11, fontWeight: '700', color: Colors.textSec, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.3 },
-  input: { borderWidth: 1, borderColor: Colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14, color: Colors.text, backgroundColor: '#FAFAFA' },
-  btn: { backgroundColor: Colors.primary, borderRadius: 10, paddingVertical: 13, alignItems: 'center', marginTop: 6, marginBottom: 16 },
-  btnText: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
-  switchText: { fontSize: 13, color: Colors.textSec, textAlign: 'center' },
-  errorBox: { backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 8, padding: 10, marginBottom: 12 },
-  errorText: { fontSize: 12, color: '#DC2626' },
-  successBox: { backgroundColor: Colors.greenBg, borderWidth: 1, borderColor: Colors.greenLight, borderRadius: 8, padding: 10, marginBottom: 12 },
-  successText: { fontSize: 12, color: Colors.green },
-})
 
 const p = StyleSheet.create({
   header: { paddingHorizontal: 16, paddingTop: 56, paddingBottom: 8 },
