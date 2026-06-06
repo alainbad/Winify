@@ -1,27 +1,42 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Animated, ActivityIndicator } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
+import { supabase } from '@/lib/supabase'
 
-const QUESTION = 'Which planet is known as the Red Planet?'
-const OPTIONS = [
-  { key: 'A', label: 'Venus' },
-  { key: 'B', label: 'Mars' },
-  { key: 'C', label: 'Jupiter' },
-  { key: 'D', label: 'Saturn' },
-]
-const CORRECT = 'B'
 const TOTAL = 10
 
-type Stage = 'answering' | 'correct' | 'wrong'
+type Option = { key: string; label: string }
+type Question = { id: number; question: string; options: Option[]; correct: string }
+type Stage = 'loading' | 'answering' | 'correct' | 'wrong'
+
+// Fallback question if Supabase is unreachable
+const FALLBACK: Question = {
+  id: 0,
+  question: 'Which planet is known as the Red Planet?',
+  options: [{ key: 'A', label: 'Venus' }, { key: 'B', label: 'Mars' }, { key: 'C', label: 'Jupiter' }, { key: 'D', label: 'Saturn' }],
+  correct: 'B',
+}
 
 export default function SkillGateWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const [question, setQuestion] = useState<Question | null>(null)
   const [timeLeft, setTimeLeft] = useState(TOTAL)
-  const [stage, setStage] = useState<Stage>('answering')
+  const [stage, setStage] = useState<Stage>('loading')
   const [selected, setSelected] = useState<string | null>(null)
   const [hover, setHover] = useState<string | null>(null)
   const resultScale = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    supabase.rpc('get_random_question').then(({ data, error }) => {
+      if (error || !data) {
+        setQuestion(FALLBACK)
+      } else {
+        setQuestion(data as Question)
+      }
+      setStage('answering')
+    })
+  }, [])
 
   useEffect(() => {
     if (stage !== 'answering') return
@@ -31,28 +46,32 @@ export default function SkillGateWeb() {
   }, [timeLeft, stage])
 
   useEffect(() => {
-    if (stage === 'answering') return
+    if (stage === 'answering' || stage === 'loading') return
     Animated.spring(resultScale, { toValue: 1, useNativeDriver: true, tension: 80, friction: 6 }).start()
   }, [stage])
 
   function handleAnswer(key: string) {
-    if (stage !== 'answering') return
+    if (stage !== 'answering' || !question) return
     setSelected(key)
-    setStage(key === CORRECT ? 'correct' : 'wrong')
+    setStage(key === question.correct ? 'correct' : 'wrong')
   }
 
   function handleRetry() {
-    setStage('answering')
+    resultScale.setValue(0)
     setSelected(null)
     setTimeLeft(TOTAL)
-    resultScale.setValue(0)
+    // Fetch a fresh random question on retry
+    setStage('loading')
+    supabase.rpc('get_random_question').then(({ data, error }) => {
+      setQuestion((!error && data) ? data as Question : FALLBACK)
+      setStage('answering')
+    })
   }
 
   const urgent = timeLeft <= 3
 
   return (
     <View style={s.page}>
-      {/* Top nav */}
       <View style={s.topNav}>
         <View style={s.topNavInner}>
           <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace(`/competition/${id}`)}>
@@ -73,7 +92,14 @@ export default function SkillGateWeb() {
             <Text style={s.sub}>Answer correctly to enter. No bots allowed.</Text>
           </View>
 
-          {stage === 'answering' && (
+          {stage === 'loading' && (
+            <View style={{ alignItems: 'center', paddingVertical: 40 }}>
+              <ActivityIndicator color="#A78BFA" size="large" />
+              <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 14 }}>Loading question…</Text>
+            </View>
+          )}
+
+          {stage === 'answering' && question && (
             <>
               <View style={s.timerRow}>
                 <View style={[s.ringWrap, { borderColor: urgent ? '#EF4444' : '#A78BFA' }]}>
@@ -82,10 +108,10 @@ export default function SkillGateWeb() {
                 <Text style={s.timerLabel}>seconds left</Text>
               </View>
 
-              <Text style={s.question}>{QUESTION}</Text>
+              <Text style={s.question}>{question.question}</Text>
 
               <View style={s.options}>
-                {OPTIONS.map(opt => {
+                {question.options.map(opt => {
                   const isHover = hover === opt.key
                   return (
                     <TouchableOpacity
@@ -109,13 +135,13 @@ export default function SkillGateWeb() {
             </>
           )}
 
-          {stage !== 'answering' && (
+          {(stage === 'correct' || stage === 'wrong') && (
             <Animated.View style={[s.result, { transform: [{ scale: resultScale }] }]}>
               {stage === 'correct' ? (
                 <>
                   <View style={s.iconGreen}><Text style={{ fontSize: 32, color: '#10B981' }}>✓</Text></View>
                   <Text style={s.resultTitle}>Correct!</Text>
-                  <Text style={s.resultDesc}>Mars is indeed the Red Planet. You're in!</Text>
+                  <Text style={s.resultDesc}>Well done — you're in!</Text>
                   <TouchableOpacity style={s.proceedBtn} onPress={() => router.push(`/competition/${id}/payment`)}>
                     <Text style={s.proceedBtnText}>Continue to Payment →</Text>
                   </TouchableOpacity>
@@ -124,7 +150,9 @@ export default function SkillGateWeb() {
                 <>
                   <View style={s.iconRed}><Text style={{ fontSize: 32, color: '#EF4444' }}>✗</Text></View>
                   <Text style={s.resultTitle}>{timeLeft <= 0 ? "Time's up!" : 'Wrong answer'}</Text>
-                  <Text style={s.resultDesc}>The correct answer is B — Mars. Try again?</Text>
+                  <Text style={s.resultDesc}>
+                    {timeLeft <= 0 ? "You ran out of time." : `The correct answer was ${question?.correct} — ${question?.options.find(o => o.key === question.correct)?.label}.`}
+                  </Text>
                   <TouchableOpacity style={s.retryBtn} onPress={handleRetry}>
                     <Text style={s.retryBtnText}>Try Again</Text>
                   </TouchableOpacity>
@@ -159,7 +187,7 @@ const s = StyleSheet.create({
   timerLabel: { fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 8, letterSpacing: 0.5, textTransform: 'uppercase', fontWeight: '600' },
   question: { fontSize: 16, fontWeight: '700', color: '#FFFFFF', textAlign: 'center', lineHeight: 22, marginBottom: 20 },
   options: { gap: 10 },
-  optionBtn: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14, transitionDuration: '0.15s' as any, cursor: 'pointer' as any },
+  optionBtn: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 14, cursor: 'pointer' as any },
   optionBtnHover: { backgroundColor: 'rgba(167,139,250,0.12)', borderColor: 'rgba(167,139,250,0.5)' },
   optionKey: { width: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(167,139,250,0.18)', alignItems: 'center', justifyContent: 'center' },
   optionKeyHover: { backgroundColor: '#A78BFA' },
@@ -169,7 +197,7 @@ const s = StyleSheet.create({
   iconGreen: { width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(16,185,129,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   iconRed: { width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(239,68,68,0.15)', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   resultTitle: { fontSize: 20, fontWeight: '800', color: '#FFFFFF', marginBottom: 6 },
-  resultDesc: { fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: 22 },
+  resultDesc: { fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: 22, lineHeight: 20 },
   proceedBtn: { backgroundColor: '#A78BFA', borderRadius: 10, paddingHorizontal: 24, paddingVertical: 13 },
   proceedBtnText: { fontSize: 14, fontWeight: '800', color: '#0F0820' },
   retryBtn: { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10, paddingHorizontal: 24, paddingVertical: 13 },
