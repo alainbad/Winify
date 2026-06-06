@@ -74,9 +74,12 @@ export default function SuccessWeb() {
     saved.current = true
     dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session!.access_token)
       .then((data: any) => {
+        console.log('[success] dbInsert result:', JSON.stringify(data))
         const row = Array.isArray(data) ? data[0] : data
         if (row?.id) setEntryId(row.id)
+        else if (row?.code || row?.message) console.error('[success] insert error:', row)
       })
+      .catch((e: any) => console.error('[success] insert failed:', e))
   }, [user, pool])
 
   const entryNum = entryId ? `#${entryId}` : `#E-${2000 + (pool?.id ?? 0)}`
