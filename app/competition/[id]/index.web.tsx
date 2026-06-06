@@ -133,7 +133,7 @@ export default function CompetitionDetailWeb() {
     return (
       <View style={s.notFound}>
         <Text style={{ fontSize: 15, color: Colors.textSec }}>Competition not found.</Text>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 12 }}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={{ marginTop: 12 }}>
           <Text style={{ color: Colors.primary, fontWeight: '700' }}>← Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -179,7 +179,7 @@ export default function CompetitionDetailWeb() {
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
         <View style={s.page}>
-          <TouchableOpacity onPress={() => router.back()} style={s.backBtn}>
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/')} style={s.backBtn}>
             <Text style={s.backArrow}>←</Text>
           </TouchableOpacity>
 
