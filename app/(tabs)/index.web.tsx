@@ -82,8 +82,8 @@ function BrandIcon({ brand, color }: { brand: string; color: string }) {
     return (
       <img
         src={src}
-        width={64}
-        height={64}
+        width={80}
+        height={80}
         alt={brand}
         onError={() => setLogoFailed(true)}
         style={{ display: 'block', objectFit: 'contain' } as any}
@@ -95,17 +95,17 @@ function BrandIcon({ brand, color }: { brand: string; color: string }) {
   const htmlIcon = BRAND_SVG_HTML[brand]
   if (htmlIcon) {
     return (
-      <svg viewBox={htmlIcon.viewBox} width={64} height={64} style={{ display: 'block' } as any}
+      <svg viewBox={htmlIcon.viewBox} width={80} height={80} style={{ display: 'block' } as any}
         dangerouslySetInnerHTML={{ __html: htmlIcon.inner }} />
     )
   }
   // Fallback: simple-icons single path
   const path = BRAND_PATHS[brand]
   if (!path) {
-    return <Text style={{ fontSize: 40, fontWeight: '900', color, opacity: 0.9 }}>{brand.charAt(0)}</Text>
+    return <Text style={{ fontSize: 44, fontWeight: '900', color, opacity: 0.9 }}>{brand.charAt(0)}</Text>
   }
   return (
-    <svg viewBox="0 0 24 24" width={64} height={64} fill={color} style={{ display: 'block' } as any}>
+    <svg viewBox="0 0 24 24" width={80} height={80} fill={color} style={{ display: 'block' } as any}>
       <path d={path} />
     </svg>
   )
@@ -472,7 +472,7 @@ export default function HomeWebScreen() {
     return matchTier && matchSearch
   })
 
-  const itemWidth = isMobile ? '49%' : isTablet ? '32%' : '24%'
+  const itemWidth = isMobile ? '49%' : isTablet ? '32%' : '19%'
 
   return (
     <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   compGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 as any },
   compGridItem: {},
   compCard: { backgroundColor: '#FFFFFF', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } },
-  compCardImage: { height: 160, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  compCardImage: { aspectRatio: 1, width: '100%', alignItems: 'center', justifyContent: 'center', position: 'relative' },
   timePill: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
   timePillText: { fontSize: 11, fontWeight: '600', color: '#FFFFFF' },
   hotPill: { position: 'absolute', top: 10, right: 10, backgroundColor: '#EA580C', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
