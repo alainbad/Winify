@@ -19,6 +19,7 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -34,7 +35,8 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
       if (session) onSuccess()
     } else {
       if (!name) { setError('Please enter your name.'); setLoading(false); return }
-      const { session, error: err } = await signUp(email, password, name)
+      if (!phone) { setError('Phone number is required.'); setLoading(false); return }
+      const { session, error: err } = await signUp(email, password, name, phone)
       setLoading(false)
       if (err) { setError(err); return }
       if (session) { onSuccess(); return }
@@ -56,6 +58,16 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
             value={name}
             onChangeText={setName}
             autoCapitalize="words"
+          />
+        )}
+        {mode === 'signup' && (
+          <TextInput
+            style={styles.input}
+            placeholder="Phone number *"
+            placeholderTextColor={Colors.muted}
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
           />
         )}
         <TextInput

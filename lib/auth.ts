@@ -70,11 +70,11 @@ export async function clearSession() {
   await storage.remove(SESSION_KEY)
 }
 
-export async function signUp(email: string, password: string, fullName: string): Promise<{ session: AuthSession | null; error: string | null }> {
+export async function signUp(email: string, password: string, fullName: string, phone?: string): Promise<{ session: AuthSession | null; error: string | null }> {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
     method: 'POST',
     headers: headers(),
-    body: JSON.stringify({ email, password, data: { full_name: fullName } }),
+    body: JSON.stringify({ email, password, data: { full_name: fullName, phone } }),
   })
   const data = await res.json()
   if (!res.ok) return { session: null, error: data.msg || data.error_description || 'Sign up failed' }

@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, RECENT_WINNERS, Pool } from '@/lib/data'
+import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
 
@@ -159,6 +160,11 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
 function Navbar() {
   const { width } = useWindowDimensions()
   const isMobile = width < 768
+  const { user } = useAuth()
+  const initials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+    : user?.email?.[0]?.toUpperCase() ?? ''
+
   return (
     <View style={styles.navbar}>
       <View style={styles.navInner}>
@@ -174,19 +180,27 @@ function Navbar() {
             <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/(tabs)/entries')}>
               <Text style={styles.navLinkText}>My Entries</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/(tabs)/account')}>
-              <Text style={styles.navLinkText}>Account</Text>
-            </TouchableOpacity>
           </View>
         )}
         <View style={styles.navActions}>
-          <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(tabs)/account')}>
-            <Text style={styles.loginBtnText}>Login</Text>
-          </TouchableOpacity>
-          {!isMobile && (
-            <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/(tabs)/account')}>
-              <Text style={styles.signupBtnText}>Sign Up</Text>
+          {user ? (
+            <TouchableOpacity style={styles.profileBtn} onPress={() => router.push('/(tabs)/account')}>
+              <View style={styles.profileAvatar}>
+                <Text style={styles.profileInitials}>{initials}</Text>
+              </View>
+              {!isMobile && <Text style={styles.profileName}>{user.user_metadata?.full_name?.split(' ')[0] ?? 'Account'}</Text>}
             </TouchableOpacity>
+          ) : (
+            <>
+              <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(tabs)/account')}>
+                <Text style={styles.loginBtnText}>Login</Text>
+              </TouchableOpacity>
+              {!isMobile && (
+                <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/(tabs)/account')}>
+                  <Text style={styles.signupBtnText}>Sign Up</Text>
+                </TouchableOpacity>
+              )}
+            </>
           )}
         </View>
       </View>
@@ -527,6 +541,10 @@ const styles = StyleSheet.create({
   loginBtnText: { fontSize: 14, fontWeight: '600', color: Colors.primary },
   signupBtn: { paddingHorizontal: 20, paddingVertical: 9, backgroundColor: Colors.primary, borderRadius: 8 },
   signupBtnText: { fontSize: 14, fontWeight: '600', color: '#FFFFFF' },
+  profileBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, cursor: 'pointer' as any },
+  profileAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
+  profileInitials: { fontSize: 13, fontWeight: '800', color: '#FFFFFF' },
+  profileName: { fontSize: 14, fontWeight: '600', color: Colors.text },
 
   // Hero
   hero: { background: 'linear-gradient(135deg, #2D1B69 0%, #4C1D95 50%, #6D28D9 100%)' as any, backgroundColor: '#2D1B69', paddingVertical: 80, paddingHorizontal: 20 },

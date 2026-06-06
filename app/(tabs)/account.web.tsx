@@ -34,15 +34,18 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
     const password = (form.elements.namedItem('password') as HTMLInputElement).value
     const nameEl = form.elements.namedItem('name') as HTMLInputElement | null
     const name = nameEl?.value.trim() ?? ''
+    const phoneEl = form.elements.namedItem('phone') as HTMLInputElement | null
+    const phone = phoneEl?.value.trim() ?? ''
 
     setError('')
     setSuccess('')
     if (!email || !password) { setError('Please enter your email and password.'); return }
     if (mode === 'signup' && password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (mode === 'signup' && !phone) { setError('Phone number is required.'); return }
 
     setLoading(true)
     if (mode === 'signup') {
-      const { session, error } = await signUp(email, password, name)
+      const { session, error } = await signUp(email, password, name, phone)
       if (error) setError(error)
       else if (session) onSuccess()
       else setSuccess('Account created! Check your email to confirm, then sign in.')
@@ -63,10 +66,16 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
 
         <form onSubmit={handleSubmit} noValidate>
           {mode === 'signup' && (
-            <div style={IS.field}>
-              <label style={IS.label} htmlFor="name">Full name</label>
-              <input style={IS.input} id="name" name="name" type="text" placeholder="Your name" />
-            </div>
+            <>
+              <div style={IS.field}>
+                <label style={IS.label} htmlFor="name">Full name</label>
+                <input style={IS.input} id="name" name="name" type="text" placeholder="Your name" />
+              </div>
+              <div style={IS.field}>
+                <label style={IS.label} htmlFor="phone">Phone number *</label>
+                <input style={IS.input} id="phone" name="phone" type="tel" placeholder="+1 234 567 8900" required />
+              </div>
+            </>
           )}
           <div style={IS.field}>
             <label style={IS.label} htmlFor="email">Email</label>
