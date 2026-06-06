@@ -27,7 +27,7 @@ const CARD_THEMES: Record<string, CardTheme> = {
   'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: SI('microsoft', 'FFFFFF') },
   'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: SI('bookingdotcom', 'FFFFFF') },
   'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: SI('airbnb', 'FFFFFF') },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: SI('nintendo', 'FFFFFF') },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: SI('nintendoswitch', 'FFFFFF') },
   'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: SI('disneyplus', 'FFFFFF') },
   'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: SI('expedia', 'FFC72C') },
 }
@@ -42,7 +42,7 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
       <View style={styles.giftCircle1} />
       <View style={styles.giftCircle2} />
       {ic?.svgUrl
-        ? <img src={ic.svgUrl} style={{ width: '52%', height: '52%', objectFit: 'contain' } as any} />
+        ? <img src={ic.svgUrl} style={{ width: 70, height: 70, objectFit: 'contain' } as any} />
         : null
       }
       <Text style={[styles.giftBrandName, { color: theme.textColor }]}>{pool.brand}</Text>
@@ -368,7 +368,7 @@ export default function HomeWebScreen() {
     return matchTier && matchSearch
   })
 
-  const itemWidth = isMobile ? 'calc(50% - 6px)' : isTablet ? 'calc(33.33% - 8px)' : 'calc(25% - 9px)'
+  const itemWidth = isMobile ? '50%' : isTablet ? '33.33%' : '25%'
 
   return (
     <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -454,14 +454,14 @@ const styles = StyleSheet.create({
   heroCompFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 },
 
   // Competition card
-  compSection: { paddingVertical: 64, paddingHorizontal: 20 },
+  compSection: { paddingVertical: 64, paddingHorizontal: 20, overflow: 'hidden' as any },
   compSectionHeader: { marginBottom: 32 },
   sectionInner: { maxWidth: MAX, marginHorizontal: 'auto' as any },
   sectionHeader: { alignItems: 'center', marginBottom: 48 },
   sectionTitle: { fontSize: 36, fontWeight: '800', color: Colors.text, letterSpacing: -0.5 },
   sectionSubtitle: { fontSize: 16, color: Colors.textSec, marginTop: 8 },
-  compGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  compGridItem: { marginBottom: 4 },
+  compGrid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6 },
+  compGridItem: { paddingHorizontal: 6, marginBottom: 12 },
   compCard: { backgroundColor: '#FFFFFF', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } },
   compCardImage: { height: 160, alignItems: 'center', justifyContent: 'center', position: 'relative' },
   timePill: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
