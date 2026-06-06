@@ -1,57 +1,53 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Animated, ActivityIndicator, TextInput } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput, useWindowDimensions } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
 
-type CardTheme = {
-  bg1: string; bg2: string; textColor: string;
-  icon?: { lib: 'fa5' | 'mci' | 'svg'; name: string; svgUrl?: string }
+const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
+
+const BRAND_DOMAINS: Record<string, string> = {
+  'Amazon': 'amazon.com', 'Xbox': 'xbox.com', 'Netflix': 'netflix.com',
+  'Steam': 'steampowered.com', 'Spotify': 'spotify.com', 'Roblox': 'roblox.com',
+  'Apple': 'apple.com', 'Uber Eats': 'ubereats.com', 'Starbucks': 'starbucks.com',
+  'PlayStation': 'playstation.com', 'Microsoft': 'microsoft.com',
+  'Booking.com': 'booking.com', 'Airbnb': 'airbnb.com', 'Nintendo': 'nintendo.com',
+  'Disney+': 'disneyplus.com', 'Expedia': 'expedia.com',
 }
 
+type CardTheme = { bg1: string; bg2: string; textColor: string }
+
 const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon' } },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox' } },
-  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: { lib: 'svg', name: 'netflix', svgUrl: 'https://cdn.simpleicons.org/netflix/E50914' } },
-  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam' } },
-  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify' } },
-  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: { lib: 'svg', name: 'roblox', svgUrl: 'https://cdn.simpleicons.org/roblox/E2231A' } },
-  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853', icon: { lib: 'svg', name: 'googleplay', svgUrl: 'https://cdn.simpleicons.org/googleplay/34A853' } },
-  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple' } },
-  'Uber Eats':   { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'ubereats', svgUrl: 'https://cdn.simpleicons.org/ubereats/FFFFFF' } },
-  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'starbucks', svgUrl: 'https://cdn.simpleicons.org/starbucks/FFFFFF' } },
-  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation' } },
-  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft' } },
-  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'bookingcom', svgUrl: 'https://cdn.simpleicons.org/bookingdotcom/FFFFFF' } },
-  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb' } },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch' } },
-  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'disneyplus', svgUrl: 'https://cdn.simpleicons.org/disneyplus/FFFFFF' } },
-  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: { lib: 'svg', name: 'expedia', svgUrl: 'https://cdn.simpleicons.org/expedia/FFC72C' } },
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF' },
+  'Xbox':        { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#107C10' },
+  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914' },
+  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF' },
+  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954' },
+  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A' },
+  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853' },
+  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF' },
+  'Uber Eats':   { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF' },
+  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF' },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF' },
+  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF' },
+  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF' },
+  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF' },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF' },
+  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF' },
+  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C' },
 }
 
 function MiniGiftCard({ pool }: { pool: Pool }) {
   const theme = CARD_THEMES[pool.brand] ?? { bg1: pool.bgColor, bg2: pool.bgColor, textColor: '#FFFFFF' }
-  const ic = theme.icon
-  const svgBg = ic?.lib === 'svg' && ic.svgUrl ? {
-    backgroundImage: `url(${ic.svgUrl})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '65% 65%',
-  } as any : {}
+  const domain = BRAND_DOMAINS[pool.brand]
+  const logoUrl = domain ? `https://img.logo.dev/${domain}?token=${LOGO_DEV_TOKEN}&size=64&format=png` : null
+  const [logoFailed, setLogoFailed] = useState(false)
   return (
-    <View style={{
-      width: 64, height: 44, borderRadius: 6, overflow: 'hidden',
-      backgroundColor: theme.bg1, alignItems: 'center', justifyContent: 'center',
-    }}>
+    <View style={{ width: 64, height: 44, borderRadius: 6, overflow: 'hidden', backgroundColor: theme.bg1, alignItems: 'center', justifyContent: 'center' }}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.4 }]} />
-      {ic?.lib === 'svg'
-        ? <View style={[{ width: '100%', height: '100%' }, svgBg]} />
-        : ic?.lib === 'fa5'
-          ? <FontAwesome5 name={ic.name as any} size={22} color={theme.textColor} brand />
-          : ic?.lib === 'mci'
-            ? <MaterialCommunityIcons name={ic.name as any} size={22} color={theme.textColor} />
-            : <Text style={{ color: theme.textColor, fontWeight: '800' }}>{pool.brand[0]}</Text>
+      {logoUrl && !logoFailed
+        ? <img src={logoUrl} onError={() => setLogoFailed(true)} style={{ width: 36, height: 36, objectFit: 'contain' }} />
+        : <Text style={{ color: theme.textColor, fontWeight: '800', fontSize: 18 }}>{pool.brand[0]}</Text>
       }
     </View>
   )
@@ -59,21 +55,42 @@ function MiniGiftCard({ pool }: { pool: Pool }) {
 
 type PayMethod = 'apple' | 'google' | 'card'
 
+function ApplePayIcon({ size, color }: { size: number; color: string }) {
+  return (
+    <img
+      src={`https://img.logo.dev/apple.com?token=${LOGO_DEV_TOKEN}&size=64&format=png`}
+      style={{ width: size, height: size, objectFit: 'contain' }}
+    />
+  )
+}
+
+function GooglePayIcon({ size }: { size: number }) {
+  return (
+    <img
+      src={`https://img.logo.dev/google.com?token=${LOGO_DEV_TOKEN}&size=64&format=png`}
+      style={{ width: size, height: size, objectFit: 'contain' }}
+    />
+  )
+}
+
+function CreditCardIcon({ size, color }: { size: number; color: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' } as any}>
+      <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+      <line x1="1" y1="10" x2="23" y2="10" />
+    </svg>
+  )
+}
+
 export default function PaymentWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
   const pool = POOLS.find(p => p.id === Number(id))
   const [method, setMethod] = useState<PayMethod>('apple')
   const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
   const [card, setCard] = useState({ number: '', exp: '', cvc: '', name: '' })
-
-  if (!pool) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FAFAFA' }}>
-        <Text style={{ color: Colors.textSec }}>Competition not found.</Text>
-      </View>
-    )
-  }
 
   // Load Gumroad's overlay script once.
   useEffect(() => {
@@ -86,15 +103,20 @@ export default function PaymentWeb() {
     document.body.appendChild(script)
   }, [])
 
+  if (!pool) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FAFAFA' }}>
+        <Text style={{ color: Colors.textSec }}>Competition not found.</Text>
+      </View>
+    )
+  }
+
   function handlePay() {
     if (!agreed || loading || !pool) return
     setLoading(true)
-
     const url = getGumroadUrl(pool.id)
     const successUrl = `${window.location.origin}/competition/${pool.id}/success`
     const checkoutUrl = `${url}?wanted=true&referrer=tickpick&redirect_to=${encodeURIComponent(successUrl)}`
-
-    // Try the Gumroad overlay first; fall back to a redirect.
     const w = window as any
     if (w.GumroadOverlay && typeof w.GumroadOverlay.show === 'function') {
       w.GumroadOverlay.show({ url: checkoutUrl })
@@ -105,6 +127,7 @@ export default function PaymentWeb() {
   }
 
   const fee = pool.price.toFixed(2)
+  const iconColor = (m: PayMethod) => method === m ? Colors.primary : Colors.textSec
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
@@ -121,29 +144,29 @@ export default function PaymentWeb() {
       </View>
 
       <View style={s.page}>
-        <View style={s.header}>
-          <Text style={s.title}>Complete your entry</Text>
+        <View style={[s.header, isMobile && { flexWrap: 'wrap' as any }]}>
+          <Text style={[s.title, isMobile && { fontSize: 20 }]}>Complete your entry</Text>
           <View style={s.passedBadge}>
             <Text style={s.passedText}>✓ Skill Gate Passed</Text>
           </View>
         </View>
 
-        <View style={s.grid}>
+        <View style={[s.grid, isMobile && { flexDirection: 'column' }]}>
           {/* LEFT: Payment form */}
-          <View style={s.left}>
+          <View style={[s.left, isMobile && { width: '100%' }]}>
             <View style={s.card}>
               <Text style={s.cardTitle}>Payment Method</Text>
-              <View style={{ flexDirection: 'row', gap: 10, marginBottom: 18 }}>
-                <TouchableOpacity onPress={() => setMethod('apple')} style={[s.methodTab, method === 'apple' && s.methodTabActive]}>
-                  <FontAwesome5 name="apple-pay" size={28} color={method === 'apple' ? Colors.primary : Colors.textSec} brand />
+              <View style={[{ flexDirection: 'row', gap: 8, marginBottom: 18 }, isMobile && { gap: 6 }]}>
+                <TouchableOpacity onPress={() => setMethod('apple')} style={[s.methodTab, method === 'apple' && s.methodTabActive, isMobile && { paddingVertical: 10, gap: 6 }]}>
+                  <ApplePayIcon size={22} color={iconColor('apple')} />
                   <Text style={[s.methodTabLabel, method === 'apple' && { color: Colors.primary }]}>Apple Pay</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setMethod('google')} style={[s.methodTab, method === 'google' && s.methodTabActive]}>
-                  <FontAwesome5 name="google-pay" size={28} color={method === 'google' ? Colors.primary : Colors.textSec} brand />
+                <TouchableOpacity onPress={() => setMethod('google')} style={[s.methodTab, method === 'google' && s.methodTabActive, isMobile && { paddingVertical: 10, gap: 6 }]}>
+                  <GooglePayIcon size={22} />
                   <Text style={[s.methodTabLabel, method === 'google' && { color: Colors.primary }]}>Google Pay</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setMethod('card')} style={[s.methodTab, method === 'card' && s.methodTabActive]}>
-                  <FontAwesome5 name="credit-card" size={20} color={method === 'card' ? Colors.primary : Colors.textSec} />
+                <TouchableOpacity onPress={() => setMethod('card')} style={[s.methodTab, method === 'card' && s.methodTabActive, isMobile && { paddingVertical: 10, gap: 6 }]}>
+                  <CreditCardIcon size={20} color={iconColor('card')} />
                   <Text style={[s.methodTabLabel, method === 'card' && { color: Colors.primary }]}>Card</Text>
                 </TouchableOpacity>
               </View>
@@ -180,12 +203,12 @@ export default function PaymentWeb() {
                 </View>
               ) : method === 'apple' ? (
                 <View style={s.applePayBox}>
-                  <FontAwesome5 name="apple-pay" size={48} color="#111111" brand />
+                  <ApplePayIcon size={48} color="#111111" />
                   <Text style={s.applePayText}>You'll be prompted to confirm with Touch ID / Face ID after clicking Pay.</Text>
                 </View>
               ) : (
                 <View style={s.applePayBox}>
-                  <FontAwesome5 name="google-pay" size={48} color="#1A73E8" brand />
+                  <GooglePayIcon size={48} />
                   <Text style={s.applePayText}>You'll be redirected to Google Pay to confirm payment after clicking Pay.</Text>
                 </View>
               )}
@@ -205,7 +228,7 @@ export default function PaymentWeb() {
           </View>
 
           {/* RIGHT: Summary */}
-          <View style={s.right}>
+          <View style={[s.right, isMobile && { width: '100%' }]}>
             <View style={s.summaryCard}>
               <Text style={s.cardTitle}>Order Summary</Text>
 
@@ -275,7 +298,7 @@ const s = StyleSheet.create({
   cardTitle: { fontSize: 14, fontWeight: '800', color: Colors.text, marginBottom: 14 },
   methodTab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 14, borderWidth: 1.5, borderColor: Colors.border, borderRadius: 10, cursor: 'pointer' as any },
   methodTabActive: { borderColor: Colors.primary, backgroundColor: Colors.primaryLight },
-  methodTabLabel: { fontSize: 13, fontWeight: '700', color: Colors.textSec },
+  methodTabLabel: { fontSize: 12, fontWeight: '700', color: Colors.textSec },
   applePayBox: { alignItems: 'center', padding: 28, borderRadius: 10, backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: Colors.border, gap: 12 },
   applePayText: { fontSize: 12, color: Colors.textSec, textAlign: 'center', lineHeight: 17, maxWidth: 320 },
   label: { fontSize: 11, fontWeight: '700', color: Colors.textSec, marginBottom: 6, letterSpacing: 0.3, textTransform: 'uppercase' },
