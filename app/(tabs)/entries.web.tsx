@@ -1,80 +1,73 @@
-import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
 import { router } from 'expo-router'
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/lib/useAuth'
 
-const MY_ENTRIES = [POOLS[3], POOLS[4], POOLS[1]]
-
-type CardTheme = {
-  bg1: string; bg2: string; textColor: string;
-  icon?: { lib: 'fa5' | 'mci' | 'svg'; name: string; svgUrl?: string }
+const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
+const BRAND_DOMAINS: Record<string, string> = {
+  'Amazon': 'amazon.com', 'Xbox': 'xbox.com', 'Netflix': 'netflix.com',
+  'Steam': 'steampowered.com', 'Spotify': 'spotify.com', 'Roblox': 'roblox.com',
+  'Apple': 'apple.com', 'Uber Eats': 'ubereats.com', 'Starbucks': 'starbucks.com',
+  'PlayStation': 'playstation.com', 'Microsoft': 'microsoft.com',
+  'Booking.com': 'booking.com', 'Airbnb': 'airbnb.com', 'Nintendo': 'nintendo.com',
+  'Disney+': 'disneyplus.com', 'Expedia': 'expedia.com',
+}
+const CARD_THEMES: Record<string, { bg1: string; bg2: string; textColor: string }> = {
+  'Amazon': { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF' },
+  'Xbox': { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#107C10' },
+  'Netflix': { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914' },
+  'Steam': { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF' },
+  'Spotify': { bg1: '#191414', bg2: '#121212', textColor: '#1DB954' },
+  'Roblox': { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A' },
+  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853' },
+  'Apple': { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF' },
+  'Uber Eats': { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF' },
+  'Starbucks': { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF' },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF' },
+  'Microsoft': { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF' },
+  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF' },
+  'Airbnb': { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF' },
+  'Nintendo': { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF' },
+  'Disney+': { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF' },
+  'Expedia': { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C' },
 }
 
-const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon' } },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox' } },
-  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: { lib: 'svg', name: 'netflix', svgUrl: 'https://cdn.simpleicons.org/netflix/E50914' } },
-  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam' } },
-  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify' } },
-  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: { lib: 'svg', name: 'roblox', svgUrl: 'https://cdn.simpleicons.org/roblox/E2231A' } },
-  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853', icon: { lib: 'svg', name: 'googleplay', svgUrl: 'https://cdn.simpleicons.org/googleplay/34A853' } },
-  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple' } },
-  'Uber Eats':   { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'ubereats', svgUrl: 'https://cdn.simpleicons.org/ubereats/FFFFFF' } },
-  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'starbucks', svgUrl: 'https://cdn.simpleicons.org/starbucks/FFFFFF' } },
-  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation' } },
-  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft' } },
-  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'bookingcom', svgUrl: 'https://cdn.simpleicons.org/bookingdotcom/FFFFFF' } },
-  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb' } },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch' } },
-  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'disneyplus', svgUrl: 'https://cdn.simpleicons.org/disneyplus/FFFFFF' } },
-  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: { lib: 'svg', name: 'expedia', svgUrl: 'https://cdn.simpleicons.org/expedia/FFC72C' } },
-}
-
-function BrandCard({ pool, size = 72 }: { pool: Pool; size?: number }) {
+function BrandCard({ pool, size = 80 }: { pool: Pool; size?: number }) {
   const theme = CARD_THEMES[pool.brand] ?? { bg1: pool.bgColor, bg2: pool.bgColor, textColor: '#FFFFFF' }
-  const ic = theme.icon
-  const svgBg = ic?.lib === 'svg' && ic.svgUrl ? {
-    backgroundImage: `url(${ic.svgUrl})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '65% 65%',
-  } as any : {}
+  const domain = BRAND_DOMAINS[pool.brand]
+  const [failed, setFailed] = useState(false)
   return (
-    <View style={{
-      width: size, height: size * 0.66, borderRadius: 8, overflow: 'hidden',
-      backgroundColor: theme.bg1, alignItems: 'center', justifyContent: 'center', position: 'relative',
-    }}>
+    <View style={{ width: size, height: size * 0.66, borderRadius: 8, overflow: 'hidden', backgroundColor: theme.bg1, alignItems: 'center', justifyContent: 'center' }}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.45 }]} />
-      {ic?.lib === 'svg'
-        ? <View style={[{ width: '100%', height: '100%' }, svgBg]} />
-        : ic?.lib === 'fa5'
-          ? <FontAwesome5 name={ic.name as any} size={Math.round(size * 0.38)} color={theme.textColor} brand />
-          : ic?.lib === 'mci'
-            ? <MaterialCommunityIcons name={ic.name as any} size={Math.round(size * 0.38)} color={theme.textColor} />
-            : <Text style={{ color: theme.textColor, fontSize: 18, fontWeight: '800' }}>{pool.brand[0]}</Text>
+      {domain && !failed
+        ? <img src={`https://img.logo.dev/${domain}?token=${LOGO_DEV_TOKEN}&size=64&format=png`} onError={() => setFailed(true)} style={{ width: size * 0.45, height: size * 0.45, objectFit: 'contain' }} />
+        : <Text style={{ color: theme.textColor, fontSize: 18, fontWeight: '800' }}>{pool.brand[0]}</Text>
       }
     </View>
   )
 }
 
-function EntryRow({ pool }: { pool: Pool }) {
+type Entry = { id: number; pool_id: number; tickets: number; amount_paid: number; created_at: string }
+
+function EntryRow({ entry, pool }: { entry: Entry; pool: Pool }) {
   const isUrgent = pool.pct > 70
+  const date = new Date(entry.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
   return (
     <View style={s.entryCard}>
       <View style={s.entryTop}>
         <BrandCard pool={pool} size={80} />
         <View style={s.entryInfo}>
           <Text style={s.entryPrize}>{pool.prize}</Text>
-          <Text style={s.entryMeta}>Entry #E-{1000 + pool.id} · ${pool.price.toFixed(2)} paid</Text>
+          <Text style={s.entryMeta}>Entry #{entry.id} · ${Number(entry.amount_paid).toFixed(2)} paid · {date}</Text>
         </View>
         <View style={s.activeBadge}>
           <View style={s.activeDot} />
           <Text style={s.activeText}>Active</Text>
         </View>
       </View>
-
       <View style={s.progressBlock}>
         <View style={s.progressHead}>
           <Text style={s.progressLabel}>{pool.entries.toLocaleString()}/{pool.total.toLocaleString()} entries · closes in {pool.time}</Text>
@@ -84,10 +77,9 @@ function EntryRow({ pool }: { pool: Pool }) {
           <View style={[s.progressFill, { width: `${pool.pct}%` as any, backgroundColor: isUrgent ? Colors.red : Colors.primary }]} />
         </View>
       </View>
-
       <View style={s.entryFooter}>
         <View style={s.verifyNote}>
-          <FontAwesome5 name="lock" size={10} color={Colors.primary} />
+          <Text style={{ fontSize: 10 }}>🔒</Text>
           <Text style={s.verifyText}>Draw verified by RANDOM.ORG — tamper-proof</Text>
         </View>
         <TouchableOpacity style={s.simulateBtn} onPress={() => router.push('/winner-reveal')}>
@@ -99,6 +91,20 @@ function EntryRow({ pool }: { pool: Pool }) {
 }
 
 export default function EntriesWeb() {
+  const { user, loading: authLoading } = useAuth()
+  const [entries, setEntries] = useState<Entry[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!user) { setLoading(false); return }
+    supabase.from('entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+      .then(({ data }) => { setEntries(data ?? []); setLoading(false) })
+  }, [user])
+
+  const entriesWithPools = entries
+    .map(e => ({ entry: e, pool: POOLS.find(p => p.id === e.pool_id) }))
+    .filter(x => x.pool) as { entry: Entry; pool: Pool }[]
+
   return (
     <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
       <View style={s.topNav}>
@@ -114,29 +120,54 @@ export default function EntriesWeb() {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
         <View style={s.page}>
-          <View style={s.pageHeader}>
-            <View>
-              <Text style={s.pageTitle}>My Entries</Text>
-              <Text style={s.pageSubtitle}>{MY_ENTRIES.length} active competitions</Text>
+          {authLoading || loading ? (
+            <View style={{ alignItems: 'center', paddingTop: 80 }}>
+              <ActivityIndicator color={Colors.primary} size="large" />
             </View>
-            <TouchableOpacity style={s.browseBtn} onPress={() => router.push('/')}>
-              <Text style={s.browseBtnText}>+ Enter More</Text>
-            </TouchableOpacity>
-          </View>
+          ) : !user ? (
+            <View style={s.emptyBox}>
+              <Text style={{ fontSize: 40, marginBottom: 14 }}>🎟</Text>
+              <Text style={s.emptyTitle}>Sign in to see your entries</Text>
+              <Text style={s.emptyDesc}>Create an account to track your competitions and get notified when you win.</Text>
+              <TouchableOpacity style={s.browseBtn} onPress={() => router.push('/(tabs)/account')}>
+                <Text style={s.browseBtnText}>Sign In / Create Account</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <View style={s.pageHeader}>
+                <View>
+                  <Text style={s.pageTitle}>My Entries</Text>
+                  <Text style={s.pageSubtitle}>{entriesWithPools.length} active competition{entriesWithPools.length !== 1 ? 's' : ''}</Text>
+                </View>
+                <TouchableOpacity style={s.browseBtn} onPress={() => router.push('/')}>
+                  <Text style={s.browseBtnText}>+ Enter More</Text>
+                </TouchableOpacity>
+              </View>
 
-          <View style={s.entriesList}>
-            {MY_ENTRIES.map(p => <EntryRow key={p.id} pool={p} />)}
-          </View>
+              {entriesWithPools.length === 0 ? (
+                <View style={s.emptyBox}>
+                  <Text style={{ fontSize: 40, marginBottom: 14 }}>🎟</Text>
+                  <Text style={s.emptyTitle}>No entries yet</Text>
+                  <Text style={s.emptyDesc}>Enter a competition to see it tracked here.</Text>
+                  <TouchableOpacity style={s.browseBtn} onPress={() => router.push('/')}>
+                    <Text style={s.browseBtnText}>Browse Competitions</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={s.entriesList}>
+                  {entriesWithPools.map(({ entry, pool }) => <EntryRow key={entry.id} entry={entry} pool={pool} />)}
+                </View>
+              )}
+            </>
+          )}
 
-          {/* Postal Entry */}
           <View style={s.postalCard}>
             <Text style={{ fontSize: 32, marginBottom: 10 }}>✉️</Text>
             <Text style={s.postalTitle}>Free Postal Entry</Text>
-            <Text style={s.postalDesc}>
-              You can enter any competition for free by post. Hand-write your name, address, and competition name on a postcard and send to:
-            </Text>
+            <Text style={s.postalDesc}>Enter any competition for free by post. Hand-write your name, address, and competition name on a postcard and send to:</Text>
             <View style={s.postalAddress}>
               <Text style={s.postalAddressText}>Tick Pick Competitions Ltd</Text>
               <Text style={s.postalAddressText}>PO Box 1234</Text>
@@ -182,7 +213,10 @@ const s = StyleSheet.create({
   verifyText: { fontSize: 11, color: Colors.primary, fontWeight: '600' },
   simulateBtn: { backgroundColor: Colors.primary, borderRadius: 8, paddingHorizontal: 18, paddingVertical: 9 },
   simulateBtnText: { fontSize: 13, fontWeight: '700', color: '#FFFFFF' },
-  postalCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 14, padding: 28, alignItems: 'center' },
+  emptyBox: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 14, padding: 40, alignItems: 'center', marginBottom: 24 },
+  emptyTitle: { fontSize: 18, fontWeight: '800', color: Colors.text, marginBottom: 8 },
+  emptyDesc: { fontSize: 13, color: Colors.textSec, textAlign: 'center', lineHeight: 20, marginBottom: 18, maxWidth: 360 },
+  postalCard: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 14, padding: 28, alignItems: 'center', marginTop: 8 },
   postalTitle: { fontSize: 18, fontWeight: '800', color: Colors.text, marginBottom: 8 },
   postalDesc: { fontSize: 13, color: Colors.textSec, textAlign: 'center', lineHeight: 20, marginBottom: 14, maxWidth: 480 },
   postalAddress: { backgroundColor: Colors.primaryLight, borderRadius: 10, paddingVertical: 14, paddingHorizontal: 24, marginBottom: 12, alignItems: 'center' },
