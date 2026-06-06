@@ -1,44 +1,57 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
 
-type CardTheme = {
-  bg1: string; bg2: string; textColor: string;
-  icon?: { lib: 'fa5' | 'mci' | 'svg'; name: string; svgUrl?: string }
+const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
+
+const BRAND_DOMAINS: Record<string, string> = {
+  'Amazon':      'amazon.com',
+  'Xbox':        'xbox.com',
+  'Netflix':     'netflix.com',
+  'Steam':       'steampowered.com',
+  'Spotify':     'spotify.com',
+  'Roblox':      'roblox.com',
+  'Google Play': 'play.google.com',
+  'Apple':       'apple.com',
+  'Uber Eats':   'ubereats.com',
+  'Starbucks':   'starbucks.com',
+  'PlayStation': 'playstation.com',
+  'Microsoft':   'microsoft.com',
+  'Booking.com': 'booking.com',
+  'Airbnb':      'airbnb.com',
+  'Nintendo':    'nintendo.com',
+  'Disney+':     'disneyplus.com',
+  'Expedia':     'expedia.com',
 }
 
-const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'amazon' } },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'xbox' } },
-  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: { lib: 'svg', name: 'netflix', svgUrl: 'https://cdn.simpleicons.org/netflix/E50914' } },
-  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'steam' } },
-  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: { lib: 'fa5', name: 'spotify' } },
-  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: { lib: 'svg', name: 'roblox', svgUrl: 'https://cdn.simpleicons.org/roblox/E2231A' } },
-  'Google Play': { bg1: '#FFFFFF', bg2: '#F5F5F5', textColor: '#34A853', icon: { lib: 'svg', name: 'googleplay', svgUrl: 'https://cdn.simpleicons.org/googleplay/34A853' } },
-  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'apple' } },
-  'Uber Eats':   { bg1: '#142328', bg2: '#06C167', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'ubereats', svgUrl: 'https://cdn.simpleicons.org/ubereats/FFFFFF' } },
-  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'starbucks', svgUrl: 'https://cdn.simpleicons.org/starbucks/FFFFFF' } },
-  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'playstation' } },
-  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'microsoft' } },
-  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'bookingcom', svgUrl: 'https://cdn.simpleicons.org/bookingdotcom/FFFFFF' } },
-  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: { lib: 'fa5', name: 'airbnb' } },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: { lib: 'mci', name: 'nintendo-switch' } },
-  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: { lib: 'svg', name: 'disneyplus', svgUrl: 'https://cdn.simpleicons.org/disneyplus/FFFFFF' } },
-  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: { lib: 'svg', name: 'expedia', svgUrl: 'https://cdn.simpleicons.org/expedia/FFC72C' } },
+const CARD_THEMES: Record<string, { bg1: string; bg2: string; textColor: string }> = {
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF' },
+  'Xbox':        { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#107C10' },
+  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914' },
+  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF' },
+  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954' },
+  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A' },
+  'Google Play': { bg1: '#1C1C1C', bg2: '#111111', textColor: '#FFFFFF' },
+  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF' },
+  'Uber Eats':   { bg1: '#142328', bg2: '#0A1A1F', textColor: '#06C167' },
+  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF' },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF' },
+  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF' },
+  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF' },
+  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF' },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF' },
+  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF' },
+  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C' },
 }
 
 function HeroGiftCard({ pool, size }: { pool: Pool; size: number }) {
+  const [logoFailed, setLogoFailed] = useState(false)
   const theme = CARD_THEMES[pool.brand] ?? { bg1: pool.bgColor, bg2: pool.bgColor, textColor: '#FFFFFF' }
-  const ic = theme.icon
-  const svgBg = ic?.lib === 'svg' && ic.svgUrl ? {
-    backgroundImage: `url(${ic.svgUrl})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '70% 70%',
-  } as any : {}
+  const domain = BRAND_DOMAINS[pool.brand]
+  const logoSize = Math.round(size * 0.38)
+
   return (
     <View style={{
       width: size, height: size, borderRadius: 20, overflow: 'hidden',
@@ -49,15 +62,18 @@ function HeroGiftCard({ pool, size }: { pool: Pool; size: number }) {
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.45 }]} />
       <View style={{ position: 'absolute', width: size * 0.7, height: size * 0.7, borderRadius: size * 0.35, backgroundColor: 'rgba(255,255,255,0.08)', top: -size * 0.15, right: -size * 0.15 }} />
       <View style={{ position: 'absolute', width: size * 0.5, height: size * 0.5, borderRadius: size * 0.25, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -size * 0.12, left: -size * 0.12 }} />
-      {ic?.lib === 'svg'
-        ? <View style={[{ width: '60%', height: '60%' }, svgBg]} />
-        : (
-          <View style={{ marginBottom: 16 }}>
-            {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={Math.round(size * 0.32)} color={theme.textColor} brand />}
-            {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={Math.round(size * 0.32)} color={theme.textColor} />}
-          </View>
-        )
-      }
+      {domain && !logoFailed ? (
+        <img
+          src={`https://img.logo.dev/${domain}?token=${LOGO_DEV_TOKEN}&size=256&format=png`}
+          width={logoSize}
+          height={logoSize}
+          alt={pool.brand}
+          onError={() => setLogoFailed(true)}
+          style={{ display: 'block', objectFit: 'contain' } as any}
+        />
+      ) : (
+        <Text style={{ fontSize: logoSize * 0.5, fontWeight: '900', color: theme.textColor }}>{pool.brand.charAt(0)}</Text>
+      )}
       <Text style={{ position: 'absolute', bottom: 28, left: 28, color: theme.textColor, fontSize: 22, fontWeight: '900', letterSpacing: 0.5 }}>{pool.brand}</Text>
       <View style={{ position: 'absolute', bottom: 28, right: 28, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 6, paddingHorizontal: 12, paddingVertical: 5 }}>
         <Text style={{ fontSize: 11, fontWeight: '800', color: 'rgba(255,255,255,0.95)', letterSpacing: 2 }}>GIFT CARD</Text>
@@ -65,6 +81,7 @@ function HeroGiftCard({ pool, size }: { pool: Pool; size: number }) {
     </View>
   )
 }
+
 
 function parseTimeToSeconds(t: string): number {
   // "18h 42m", "12m", "6d 12h"
@@ -87,6 +104,9 @@ function CountdownBox({ value, label }: { value: number; label: string }) {
 
 export default function CompetitionDetailWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
+  const cardSize = isMobile ? Math.min(width - 48, 340) : 520
   const pool = POOLS.find(p => p.id === Number(id))
 
   const [bundle, setBundle] = useState<number | null>(null)
@@ -165,7 +185,7 @@ export default function CompetitionDetailWeb() {
           <View style={s.grid}>
             {/* LEFT: Image */}
             <View style={s.left}>
-              <HeroGiftCard pool={pool} size={520} />
+              <HeroGiftCard pool={pool} size={cardSize} />
             </View>
 
             {/* RIGHT: Purchase */}
@@ -347,9 +367,9 @@ const s = StyleSheet.create({
   page: { maxWidth: 1200, width: '100%', alignSelf: 'center', paddingHorizontal: 32, paddingTop: 24 },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   backArrow: { fontSize: 18, color: Colors.primary, fontWeight: '700' },
-  grid: { flexDirection: 'row', gap: 60, alignItems: 'flex-start' },
-  left: { width: 520, alignItems: 'center' },
-  right: { flex: 1, maxWidth: 520 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap' as any, gap: 40, alignItems: 'flex-start' },
+  left: { alignItems: 'center', width: '100%' as any, maxWidth: 520 },
+  right: { flex: 1, minWidth: 280, maxWidth: 520 },
   pillsRow: { flexDirection: 'row', gap: 10, marginBottom: 18 },
   pillPrimary: { backgroundColor: Colors.primaryLight, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 6 },
   pillPrimaryText: { fontSize: 12, fontWeight: '700', color: Colors.primary },
