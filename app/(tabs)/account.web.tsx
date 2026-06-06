@@ -16,20 +16,35 @@ function AuthForm() {
   async function handleSubmit() {
     setError('')
     setSuccess('')
-    if (!email || !password) { setError('Please fill in all fields.'); return }
+    if (!email || !password) { setError('Please enter your email and password.'); return }
+    if (mode === 'signup' && password.length < 6) { setError('Password must be at least 6 characters.'); return }
     setLoading(true)
 
     if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name: name } },
       })
-      if (error) setError(error.message)
-      else setSuccess('Check your email to confirm your account.')
+      if (error) {
+        setError(error.message)
+      } else if (data.session) {
+        // Email confirmation disabled — user is signed in immediately, nothing to do
+      } else {
+        // Email confirmation enabled — tell them to check email
+        setSuccess('Account created! Check your email to confirm, then sign in.')
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) setError(error.message)
+      if (error) {
+        if (error.message.includes('Invalid login')) {
+          setError('Incorrect email or password.')
+        } else if (error.message.includes('Email not confirmed')) {
+          setError('Please confirm your email first, then try signing in.')
+        } else {
+          setError(error.message)
+        }
+      }
     }
     setLoading(false)
   }
@@ -56,9 +71,10 @@ function AuthForm() {
         </View>
 
         <View style={f.field}>
-          <Text style={f.label}>Password</Text>
+          <Text style={f.label}>Password{mode === 'signup' ? ' (min 6 characters)' : ''}</Text>
           <TextInput style={f.input} placeholder="••••••••" placeholderTextColor={Colors.muted}
-            value={password} onChangeText={setPassword} secureTextEntry />
+            value={password} onChangeText={setPassword} secureTextEntry
+            onSubmitEditing={handleSubmit} returnKeyType="go" />
         </View>
 
         {!!error && <View style={f.errorBox}><Text style={f.errorText}>{error}</Text></View>}
