@@ -1,26 +1,29 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './supabase'
-import type { User, Session } from '@supabase/supabase-js'
+import { getSession, clearSession, type AuthSession } from './auth'
+
+export type AuthUser = AuthSession['user'] | null
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
+  const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    setSession(getSession())
+    setLoading(false)
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
+    // Listen for session changes from other tabs or sign-out
+    function onStorage(e: StorageEvent) {
+      if (e.key === 'tp_session') {
+        setSession(e.newValue ? JSON.parse(e.newValue) : null)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  return { user, session, loading }
+  function refresh() {
+    setSession(getSession())
+  }
+
+  return { user: session?.user ?? null, session, loading, refresh }
 }

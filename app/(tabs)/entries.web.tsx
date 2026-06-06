@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator
 import { router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
-import { supabase } from '@/lib/supabase'
+import { dbQuery } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
@@ -91,14 +91,14 @@ function EntryRow({ entry, pool }: { entry: Entry; pool: Pool }) {
 }
 
 export default function EntriesWeb() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, session, loading: authLoading } = useAuth()
   const [entries, setEntries] = useState<Entry[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user) { setLoading(false); return }
-    supabase.from('entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
-      .then(({ data }) => { setEntries(data ?? []); setLoading(false) })
+    dbQuery(`entries?user_id=eq.${user.id}&order=created_at.desc`, session!.access_token)
+      .then((data: any) => { setEntries(Array.isArray(data) ? data : []); setLoading(false) })
   }, [user])
 
   const entriesWithPools = entries

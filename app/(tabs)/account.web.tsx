@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, ScrollView } from 'react-native'
 import { Colors } from '@/constants/theme'
-import { supabase } from '@/lib/supabase'
+import { signUp, signIn, signOut, dbQuery } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
-function AuthForm() {
+function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,34 +16,25 @@ function AuthForm() {
   async function handleSubmit() {
     setError('')
     setSuccess('')
-    if (!email || !password) { setError('Please enter your email and password.'); return }
+    if (!email.trim() || !password) { setError('Please enter your email and password.'); return }
     if (mode === 'signup' && password.length < 6) { setError('Password must be at least 6 characters.'); return }
     setLoading(true)
 
     if (mode === 'signup') {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: name } },
-      })
+      const { session, error } = await signUp(email.trim(), password, name.trim())
       if (error) {
-        setError(error.message)
-      } else if (data.session) {
-        // Email confirmation disabled — user is signed in immediately, nothing to do
+        setError(error)
+      } else if (session) {
+        onSuccess()
       } else {
-        // Email confirmation enabled — tell them to check email
         setSuccess('Account created! Check your email to confirm, then sign in.')
       }
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      const { session, error } = await signIn(email.trim(), password)
       if (error) {
-        if (error.message.includes('Invalid login')) {
-          setError('Incorrect email or password.')
-        } else if (error.message.includes('Email not confirmed')) {
-          setError('Please confirm your email first, then try signing in.')
-        } else {
-          setError(error.message)
-        }
+        setError(error)
+      } else if (session) {
+        onSuccess()
       }
     }
     setLoading(false)
@@ -98,8 +89,8 @@ function AuthForm() {
   )
 }
 
-function AccountProfile() {
-  const { user } = useAuth()
+function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
+  const { user, session } = useAuth()
   const [entryCount, setEntryCount] = useState(0)
   const [signingOut, setSigningOut] = useState(false)
 
@@ -111,21 +102,21 @@ function AccountProfile() {
     : ''
 
   useEffect(() => {
-    if (!user) return
-    supabase.from('entries').select('id', { count: 'exact', head: true }).eq('user_id', user.id)
-      .then(({ count }) => setEntryCount(count ?? 0))
+    if (!user || !session) return
+    dbQuery(`entries?user_id=eq.${user.id}&select=id`, session.access_token)
+      .then((data: any[]) => setEntryCount(Array.isArray(data) ? data.length : 0))
+      .catch(() => {})
   }, [user])
 
-  async function signOut() {
+  async function handleSignOut() {
     setSigningOut(true)
-    await supabase.auth.signOut()
-    setSigningOut(false)
+    await signOut()
+    onSignOut()
   }
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.bg }} contentContainerStyle={{ paddingBottom: 40 }}>
       <View style={p.header}><Text style={p.title}>Account</Text></View>
-
       <View style={{ paddingHorizontal: 16 }}>
         <View style={p.profileCard}>
           <View style={p.avatar}>
@@ -168,11 +159,9 @@ function AccountProfile() {
             </View>
           ))}
           <View style={p.divider} />
-          <TouchableOpacity style={p.row} onPress={signOut} disabled={signingOut} activeOpacity={0.7}>
+          <TouchableOpacity style={p.row} onPress={handleSignOut} disabled={signingOut} activeOpacity={0.7}>
             <Text style={{ fontSize: 18, marginRight: 12 }}>🚪</Text>
-            <Text style={[p.rowLabel, { color: Colors.red }]}>
-              {signingOut ? 'Signing out…' : 'Sign Out'}
-            </Text>
+            <Text style={[p.rowLabel, { color: Colors.red }]}>{signingOut ? 'Signing out…' : 'Sign Out'}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -181,7 +170,7 @@ function AccountProfile() {
 }
 
 export default function AccountWeb() {
-  const { user, loading } = useAuth()
+  const { user, loading, refresh } = useAuth()
 
   if (loading) {
     return (
@@ -191,7 +180,9 @@ export default function AccountWeb() {
     )
   }
 
-  return user ? <AccountProfile /> : <AuthForm />
+  return user
+    ? <AccountProfile onSignOut={refresh} />
+    : <AuthForm onSuccess={refresh} />
 }
 
 const f = StyleSheet.create({

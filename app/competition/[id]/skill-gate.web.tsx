@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Animated, ActivityIndicator } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
-import { supabase } from '@/lib/supabase'
+import { rpc } from '@/lib/auth'
 
 const TOTAL = 10
 
@@ -28,14 +28,10 @@ export default function SkillGateWeb() {
   const resultScale = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    supabase.rpc('get_random_question').then(({ data, error }) => {
-      if (error || !data) {
-        setQuestion(FALLBACK)
-      } else {
-        setQuestion(data as Question)
-      }
+    rpc('get_random_question').then((data: any) => {
+      setQuestion(data && data.question ? data as Question : FALLBACK)
       setStage('answering')
-    })
+    }).catch(() => { setQuestion(FALLBACK); setStage('answering') })
   }, [])
 
   useEffect(() => {
@@ -62,10 +58,10 @@ export default function SkillGateWeb() {
     setTimeLeft(TOTAL)
     // Fetch a fresh random question on retry
     setStage('loading')
-    supabase.rpc('get_random_question').then(({ data, error }) => {
-      setQuestion((!error && data) ? data as Question : FALLBACK)
+    rpc('get_random_question').then((data: any) => {
+      setQuestion(data && data.question ? data as Question : FALLBACK)
       setStage('answering')
-    })
+    }).catch(() => { setQuestion(FALLBACK); setStage('answering') })
   }
 
   const urgent = timeLeft <= 3

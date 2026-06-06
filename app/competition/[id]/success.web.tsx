@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView } from '
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
-import { supabase } from '@/lib/supabase'
+import { dbInsert } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
@@ -52,7 +52,7 @@ function MiniGiftCard({ pool, size = 96 }: { pool: Pool; size?: number }) {
 
 export default function SuccessWeb() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { user } = useAuth()
+  const { user, session } = useAuth()
   const pool = POOLS.find(p => p.id === Number(id))
   const scale = useRef(new Animated.Value(0)).current
   const opacity = useRef(new Animated.Value(0)).current
@@ -72,14 +72,11 @@ export default function SuccessWeb() {
   useEffect(() => {
     if (!user || !pool || saved.current) return
     saved.current = true
-    supabase.from('entries').insert({
-      user_id: user.id,
-      pool_id: pool.id,
-      tickets: 1,
-      amount_paid: pool.price,
-    }).select('id').single().then(({ data }) => {
-      if (data) setEntryId(data.id)
-    })
+    dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session!.access_token)
+      .then((data: any) => {
+        const row = Array.isArray(data) ? data[0] : data
+        if (row?.id) setEntryId(row.id)
+      })
   }, [user, pool])
 
   const entryNum = entryId ? `#${entryId}` : `#E-${2000 + (pool?.id ?? 0)}`
