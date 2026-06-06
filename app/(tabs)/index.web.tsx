@@ -165,11 +165,18 @@ function Navbar() {
         <Text style={styles.navLogo}>Tick Pick</Text>
         {!isMobile && (
           <View style={styles.navLinks}>
-            {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
-              <TouchableOpacity key={link} style={styles.navLinkBtn}>
-                <Text style={styles.navLinkText}>{link}</Text>
-              </TouchableOpacity>
-            ))}
+            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/')}>
+              <Text style={styles.navLinkText}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/browse')}>
+              <Text style={styles.navLinkText}>Browse</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/(tabs)/entries')}>
+              <Text style={styles.navLinkText}>My Entries</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/(tabs)/account')}>
+              <Text style={styles.navLinkText}>Account</Text>
+            </TouchableOpacity>
           </View>
         )}
         <View style={styles.navActions}>
