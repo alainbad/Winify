@@ -161,7 +161,7 @@ export default function CompetitionDetailWeb() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <View style={{ minHeight: '100vh' as any, backgroundColor: '#FFFFFF' }}>
       {/* Top nav */}
       <View style={s.topNav}>
         <View style={s.topNavInner}>
