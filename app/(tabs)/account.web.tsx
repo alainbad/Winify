@@ -4,6 +4,23 @@ import { Colors } from '@/constants/theme'
 import { signUp, signIn, signOut, dbQuery } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
+const IS = {
+  wrap: { display: 'flex' as any, alignItems: 'center', justifyContent: 'center', minHeight: '80vh', background: '#F9FAFB', padding: 24 },
+  card: { width: '100%', maxWidth: 400, background: '#fff', border: '1px solid #E5E7EB', borderRadius: 16, padding: 28 },
+  logo: { fontSize: 15, fontWeight: 900, color: '#7C3AED', marginBottom: 20, display: 'block' as any },
+  heading: { fontSize: 22, fontWeight: 800, color: '#111827', marginBottom: 4, display: 'block' as any },
+  sub: { fontSize: 13, color: '#6B7280', marginBottom: 22, display: 'block' as any },
+  field: { marginBottom: 14 },
+  label: { display: 'block' as any, fontSize: 11, fontWeight: 700, color: '#6B7280', marginBottom: 6, textTransform: 'uppercase' as any, letterSpacing: '0.3px' },
+  input: { width: '100%', boxSizing: 'border-box' as any, border: '1px solid #E5E7EB', borderRadius: 8, padding: '11px 12px', fontSize: 14, color: '#111827', background: '#FAFAFA', outline: 'none', fontFamily: 'inherit', display: 'block' as any },
+  btn: { width: '100%', background: '#7C3AED', color: '#fff', border: 'none', borderRadius: 10, padding: '13px', fontSize: 14, fontWeight: 800, cursor: 'pointer', marginTop: 6, marginBottom: 16, fontFamily: 'inherit', display: 'block' as any },
+  btnDisabled: { opacity: 0.6, cursor: 'not-allowed' },
+  switchBtn: { fontSize: 13, color: '#6B7280', textAlign: 'center' as any, cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', width: '100%', padding: 0 },
+  switchSpan: { color: '#7C3AED', fontWeight: 700 },
+  error: { background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: 10, marginBottom: 12, fontSize: 12, color: '#DC2626' },
+  success: { background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, padding: 10, marginBottom: 12, fontSize: 12, color: '#16A34A' },
+}
+
 function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [loading, setLoading] = useState(false)
@@ -15,7 +32,8 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
     const form = e.target as HTMLFormElement
     const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim()
     const password = (form.elements.namedItem('password') as HTMLInputElement).value
-    const name = mode === 'signup' ? (form.elements.namedItem('name') as HTMLInputElement)?.value.trim() ?? '' : ''
+    const nameEl = form.elements.namedItem('name') as HTMLInputElement | null
+    const name = nameEl?.value.trim() ?? ''
 
     setError('')
     setSuccess('')
@@ -36,65 +54,43 @@ function AuthForm({ onSuccess }: { onSuccess: () => void }) {
     setLoading(false)
   }
 
-  const css = `
-    .auth-wrap { display:flex; align-items:center; justify-content:center; min-height:80vh; background:#F9FAFB; padding:24px; }
-    .auth-card { width:100%; max-width:400px; background:#fff; border:1px solid #E5E7EB; border-radius:16px; padding:28px; }
-    .auth-logo { font-size:15px; font-weight:900; color:#7C3AED; margin-bottom:20px; }
-    .auth-heading { font-size:22px; font-weight:800; color:#111827; margin-bottom:4px; }
-    .auth-sub { font-size:13px; color:#6B7280; margin-bottom:22px; }
-    .auth-field { margin-bottom:14px; }
-    .auth-label { display:block; font-size:11px; font-weight:700; color:#6B7280; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px; }
-    .auth-input { width:100%; box-sizing:border-box; border:1px solid #E5E7EB; border-radius:8px; padding:11px 12px; font-size:14px; color:#111827; background:#FAFAFA; outline:none; font-family:inherit; }
-    .auth-input:focus { border-color:#7C3AED; background:#fff; }
-    .auth-btn { width:100%; background:#7C3AED; color:#fff; border:none; border-radius:10px; padding:13px; font-size:14px; font-weight:800; cursor:pointer; margin-top:6px; margin-bottom:16px; font-family:inherit; }
-    .auth-btn:hover { background:#6D28D9; }
-    .auth-btn:disabled { opacity:0.6; cursor:not-allowed; }
-    .auth-switch { font-size:13px; color:#6B7280; text-align:center; cursor:pointer; background:none; border:none; font-family:inherit; width:100%; }
-    .auth-switch span { color:#7C3AED; font-weight:700; }
-    .auth-error { background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#DC2626; }
-    .auth-success { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#16A34A; }
-  `
-
   return (
-    <View style={{ flex: 1 }}>
-      <style dangerouslySetInnerHTML={{ __html: css }} />
-      <div className="auth-wrap">
-        <div className="auth-card">
-          <div className="auth-logo">● Tick Pick</div>
-          <div className="auth-heading">{mode === 'login' ? 'Welcome back' : 'Create account'}</div>
-          <div className="auth-sub">{mode === 'login' ? 'Sign in to track your entries' : 'Join to start entering competitions'}</div>
+    <div style={IS.wrap}>
+      <div style={IS.card}>
+        <span style={IS.logo}>● Tick Pick</span>
+        <span style={IS.heading}>{mode === 'login' ? 'Welcome back' : 'Create account'}</span>
+        <span style={IS.sub}>{mode === 'login' ? 'Sign in to track your entries' : 'Join to start entering competitions'}</span>
 
-          <form onSubmit={handleSubmit}>
-            {mode === 'signup' && (
-              <div className="auth-field">
-                <label className="auth-label" htmlFor="name">Full name</label>
-                <input className="auth-input" id="name" name="name" type="text" placeholder="Your name" autoComplete="name" />
-              </div>
-            )}
-            <div className="auth-field">
-              <label className="auth-label" htmlFor="email">Email</label>
-              <input className="auth-input" id="email" name="email" type="email" placeholder="you@example.com" autoComplete="email" required />
+        <form onSubmit={handleSubmit} noValidate>
+          {mode === 'signup' && (
+            <div style={IS.field}>
+              <label style={IS.label} htmlFor="name">Full name</label>
+              <input style={IS.input} id="name" name="name" type="text" placeholder="Your name" />
             </div>
-            <div className="auth-field">
-              <label className="auth-label" htmlFor="password">Password{mode === 'signup' ? ' (min 6 chars)' : ''}</label>
-              <input className="auth-input" id="password" name="password" type="password" placeholder="••••••••" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required />
-            </div>
+          )}
+          <div style={IS.field}>
+            <label style={IS.label} htmlFor="email">Email</label>
+            <input style={IS.input} id="email" name="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div style={IS.field}>
+            <label style={IS.label} htmlFor="password">Password{mode === 'signup' ? ' (min 6 chars)' : ''}</label>
+            <input style={IS.input} id="password" name="password" type="password" placeholder="••••••••" />
+          </div>
 
-            {error ? <div className="auth-error">{error}</div> : null}
-            {success ? <div className="auth-success">{success}</div> : null}
+          {error ? <div style={IS.error}>{error}</div> : null}
+          {success ? <div style={IS.success}>{success}</div> : null}
 
-            <button className="auth-btn" type="submit" disabled={loading}>
-              {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
-            </button>
-          </form>
-
-          <button className="auth-switch" type="button" onClick={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError(''); setSuccess('') }}>
-            {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-            <span>{mode === 'login' ? 'Sign up' : 'Sign in'}</span>
+          <button style={{ ...IS.btn, ...(loading ? IS.btnDisabled : {}) }} type="submit" disabled={loading}>
+            {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
-        </div>
+        </form>
+
+        <button style={IS.switchBtn} type="button" onClick={() => { setMode(m => m === 'login' ? 'signup' : 'login'); setError(''); setSuccess('') }}>
+          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+          <span style={IS.switchSpan}>{mode === 'login' ? 'Sign up' : 'Sign in'}</span>
+        </button>
       </div>
-    </View>
+    </div>
   )
 }
 
