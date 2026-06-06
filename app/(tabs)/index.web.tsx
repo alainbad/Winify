@@ -34,20 +34,14 @@ const CARD_THEMES: Record<string, CardTheme> = {
 function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; children?: React.ReactNode }) {
   const theme = CARD_THEMES[pool.brand] ?? { bg1: pool.bgColor, bg2: pool.bgColor, textColor: '#FFFFFF' }
   const ic = theme.icon
-  const svgBg = ic?.lib === 'svg' && ic.svgUrl ? {
-    backgroundImage: `url(${ic.svgUrl})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
-    backgroundSize: '72% 72%',
-  } as any : {}
 
   return (
     <View style={[style, { backgroundColor: theme.bg1, position: 'relative', overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }]}>
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.45 }]} />
       <View style={styles.giftCircle1} />
       <View style={styles.giftCircle2} />
-      {ic?.lib === 'svg'
-        ? <View style={[styles.giftSvgBox, svgBg]} />
+      {ic?.lib === 'svg' && ic.svgUrl
+        ? <img src={ic.svgUrl} style={{ width: '55%', height: '55%', objectFit: 'contain' } as any} />
         : (
           <View style={styles.giftIconWrap}>
             {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 72} color={theme.textColor} brand />}
@@ -367,6 +361,9 @@ function Footer() {
 export default function HomeWebScreen() {
   const [filter, setFilter] = useState<Filter>('All')
   const [search, setSearch] = useState('')
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
+  const isTablet = width >= 768 && width < 1100
 
   const featured = POOLS.find(p => p.featured)!
   const pools = POOLS.filter(p => {
@@ -374,6 +371,8 @@ export default function HomeWebScreen() {
     const matchSearch = search === '' || p.prize.toLowerCase().includes(search.toLowerCase()) || p.brand.toLowerCase().includes(search.toLowerCase())
     return matchTier && matchSearch
   })
+
+  const itemWidth = isMobile ? '50%' : isTablet ? '33.33%' : '25%'
 
   return (
     <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -385,13 +384,13 @@ export default function HomeWebScreen() {
       <View style={styles.compSection}>
         <View style={styles.sectionInner}>
           <View style={styles.compSectionHeader}>
-            <Text style={styles.sectionTitle}>Live Competitions</Text>
+            <Text style={[styles.sectionTitle, isMobile && { fontSize: 26 }]}>Live Competitions</Text>
             <Text style={styles.sectionSubtitle}>{POOLS.length} draws live now — new ones added daily</Text>
           </View>
           <FilterBar active={filter} onSelect={setFilter} search={search} onSearch={setSearch} />
           <View style={styles.compGrid}>
             {pools.map(p => (
-              <View key={p.id} style={styles.compGridItem}>
+              <View key={p.id} style={[styles.compGridItem, { width: itemWidth }]}>
                 <CompCard pool={p} />
               </View>
             ))}
