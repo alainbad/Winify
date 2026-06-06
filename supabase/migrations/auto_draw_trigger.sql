@@ -11,7 +11,8 @@ insert into pools (id, total) values
 on conflict (id) do update set total = excluded.total;
 
 -- 2. Prevent duplicate winners for the same pool
-alter table winners add constraint if not exists winners_pool_id_unique unique (pool_id);
+alter table winners drop constraint if exists winners_pool_id_unique;
+alter table winners add constraint winners_pool_id_unique unique (pool_id);
 
 -- 3. HTTP extension for calling the edge function from a trigger
 create extension if not exists pg_net;
