@@ -386,12 +386,15 @@ function WinnersTicker() {
 
 // ─── How It Works ────────────────────────────────────────────────────────
 function HowItWorks() {
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
   const steps = [
     { icon: '🎯', title: 'Pick a Competition', desc: 'Browse hundreds of live prize draws. From $10 gift cards to $1,000 vouchers.' },
     { icon: '🎟️', title: 'Enter for $2', desc: 'One flat price, no hidden fees. Every ticket gives you a fair shot at winning.' },
     { icon: '🎲', title: 'Fair Draw', desc: 'When tickets sell out, a winner is picked by RANDOM.ORG — provably fair every time.' },
     { icon: '🏆', title: 'Claim Your Prize', desc: 'Winners are notified instantly and prizes delivered within 24 hours.' },
   ]
+  const cardWidth = isMobile ? '48%' : '23%'
   return (
     <View style={styles.howSection}>
       <View style={styles.sectionInner}>
@@ -399,9 +402,9 @@ function HowItWorks() {
           <Text style={styles.sectionTitle}>How It Works</Text>
           <Text style={styles.sectionSubtitle}>Four simple steps to your next win</Text>
         </View>
-        <View style={styles.howGrid}>
+        <View style={[styles.howGrid, isMobile && { flexWrap: 'wrap' }]}>
           {steps.map((s, i) => (
-            <View key={i} style={styles.howCard}>
+            <View key={i} style={[styles.howCard, { width: cardWidth as any }]}>
               <View style={styles.howIconWrap}>
                 <Text style={styles.howIcon}>{s.icon}</Text>
                 <View style={styles.howStepNum}><Text style={styles.howStepNumText}>{i + 1}</Text></View>
@@ -620,8 +623,8 @@ const styles = StyleSheet.create({
 
   // How it works
   howSection: { backgroundColor: '#FFFFFF', paddingVertical: 80, paddingHorizontal: 20 },
-  howGrid: { flexDirection: 'row', gap: 24 },
-  howCard: { flex: 1, alignItems: 'center', padding: 28, backgroundColor: Colors.bg, borderRadius: 16, borderWidth: 1, borderColor: Colors.border },
+  howGrid: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' as any },
+  howCard: { alignItems: 'center', padding: 24, backgroundColor: Colors.bg, borderRadius: 16, borderWidth: 1, borderColor: Colors.border },
   howIconWrap: { width: 64, height: 64, borderRadius: 20, backgroundColor: Colors.primaryLight, alignItems: 'center', justifyContent: 'center', marginBottom: 18, position: 'relative' },
   howIcon: { fontSize: 30 },
   howStepNum: { position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: 10, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' },
