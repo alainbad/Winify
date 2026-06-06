@@ -173,11 +173,11 @@ function Navbar() {
           </View>
         )}
         <View style={styles.navActions}>
-          <TouchableOpacity style={styles.loginBtn}>
+          <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(tabs)/account')}>
             <Text style={styles.loginBtnText}>Login</Text>
           </TouchableOpacity>
           {!isMobile && (
-            <TouchableOpacity style={styles.signupBtn}>
+            <TouchableOpacity style={styles.signupBtn} onPress={() => router.push('/(tabs)/account')}>
               <Text style={styles.signupBtnText}>Sign Up</Text>
             </TouchableOpacity>
           )}
@@ -252,7 +252,7 @@ function Hero({ featured }: { featured: Pool }) {
             <TouchableOpacity style={styles.heroCta} onPress={() => router.push('/browse')}>
               <Text style={styles.heroCtaText}>Browse Competitions →</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.heroCtaOutline}>
+            <TouchableOpacity style={styles.heroCtaOutline} onPress={() => { const el = document.getElementById('how-it-works'); el?.scrollIntoView({ behavior: 'smooth' }) }}>
               <Text style={styles.heroCtaOutlineText}>How It Works</Text>
             </TouchableOpacity>
           </View>
