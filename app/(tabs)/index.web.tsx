@@ -11,25 +11,26 @@ type CardTheme = {
 }
 
 // svg = use simpleicons CDN via CSS backgroundImage (for brands not in FA5/MCI)
-const SI = (slug: string, color: string) => ({ lib: 'svg' as const, name: slug, svgUrl: `https://cdn.simpleicons.org/${slug}/${color}` })
+const FA = (name: string, size = 64) => ({ lib: 'fa5' as const, name, size, svgUrl: undefined })
+const MCI = (name: string, size = 64) => ({ lib: 'mci' as const, name, size, svgUrl: undefined })
 const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: SI('amazonprime', 'FFFFFF') },
-  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: SI('xbox', 'FFFFFF') },
-  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: SI('netflix', 'E50914') },
-  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: SI('steam', 'FFFFFF') },
-  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: SI('spotify', '1DB954') },
-  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: SI('roblox', 'E2231A') },
-  'Google Play': { bg1: '#1C1C1C', bg2: '#111111', textColor: '#FFFFFF', icon: SI('googleplay', 'FFFFFF') },
-  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: SI('apple', 'FFFFFF') },
-  'Uber Eats':   { bg1: '#142328', bg2: '#0A1A1F', textColor: '#06C167', icon: SI('uber', '06C167') },
-  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: SI('starbucks', 'FFFFFF') },
-  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: SI('playstation', 'FFFFFF') },
-  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: SI('microsoft', 'FFFFFF') },
-  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: SI('bookingdotcom', 'FFFFFF') },
-  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: SI('airbnb', 'FFFFFF') },
-  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: SI('nintendoswitch', 'FFFFFF') },
-  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: SI('disneyplus', 'FFFFFF') },
-  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: SI('expedia', 'FFC72C') },
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: FA('amazon') },
+  'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: FA('xbox') },
+  'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: MCI('netflix') },
+  'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: FA('steam') },
+  'Spotify':     { bg1: '#191414', bg2: '#121212', textColor: '#1DB954', icon: FA('spotify') },
+  'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: MCI('roblox') },
+  'Google Play': { bg1: '#1C1C1C', bg2: '#111111', textColor: '#34A853', icon: FA('google-play') },
+  'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: FA('apple') },
+  'Uber Eats':   { bg1: '#142328', bg2: '#0A1A1F', textColor: '#06C167', icon: FA('uber') },
+  'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: MCI('coffee') },
+  'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: FA('playstation') },
+  'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: FA('microsoft') },
+  'Booking.com': { bg1: '#003580', bg2: '#002B6B', textColor: '#FFFFFF', icon: MCI('bed') },
+  'Airbnb':      { bg1: '#FF5A5F', bg2: '#E0474C', textColor: '#FFFFFF', icon: FA('airbnb') },
+  'Nintendo':    { bg1: '#E60012', bg2: '#C4000F', textColor: '#FFFFFF', icon: MCI('nintendo-switch') },
+  'Disney+':     { bg1: '#0F1F5C', bg2: '#1A3080', textColor: '#FFFFFF', icon: MCI('castle') },
+  'Expedia':     { bg1: '#00355F', bg2: '#00243F', textColor: '#FFC72C', icon: MCI('airplane') },
 }
 
 function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; children?: React.ReactNode }) {
@@ -41,10 +42,8 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.45 }]} />
       <View style={styles.giftCircle1} />
       <View style={styles.giftCircle2} />
-      {ic?.svgUrl
-        ? <img src={ic.svgUrl} style={{ width: 70, height: 70, objectFit: 'contain' } as any} />
-        : null
-      }
+      {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 64} color={theme.textColor} brand />}
+      {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={ic.size ?? 64} color={theme.textColor} />}
       <Text style={[styles.giftBrandName, { color: theme.textColor }]}>{pool.brand}</Text>
       <View style={styles.giftLabel}>
         <Text style={styles.giftLabelText}>GIFT CARD</Text>
