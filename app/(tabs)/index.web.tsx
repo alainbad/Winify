@@ -236,9 +236,9 @@ function Hero({ featured }: { featured: Pool }) {
   const isMobile = width < 768
   return (
     <View style={styles.hero}>
-      <View style={[styles.heroInner, isMobile && { flexDirection: 'column', gap: 32, alignItems: 'stretch' }]}>
+      <View style={[styles.heroInner, isMobile && { flexDirection: 'column', gap: 32, alignItems: 'stretch', width: '100%' as any }]}>
         {/* Left */}
-        <View style={styles.heroLeft}>
+        <View style={[styles.heroLeft, isMobile && { width: '100%' as any }]}>
           <View style={styles.heroBadge}>
             <View style={styles.liveDotGreen} />
             <Text style={styles.heroBadgeText}>38 live competitions right now</Text>
