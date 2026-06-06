@@ -120,57 +120,70 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: Colors.bg }} contentContainerStyle={{ paddingBottom: 40 }}>
-      <View style={p.header}><Text style={p.title}>Account</Text></View>
-      <View style={{ paddingHorizontal: 16 }}>
-        <View style={p.profileCard}>
-          <View style={p.avatar}>
-            <Text style={{ fontSize: 26, fontWeight: '800', color: '#fff' }}>{initials}</Text>
+    <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+      {/* Top Nav */}
+      <View style={{ backgroundColor: Colors.primary }}>
+        <View style={{ maxWidth: 1280, width: '100%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 32, paddingVertical: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900' }}>●</Text>
+            <Text style={{ fontSize: 18, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.4 }}>Tick Pick</Text>
           </View>
-          <Text style={p.profileName}>{name}</Text>
-          <Text style={p.profileEmail}>{email}</Text>
-          {!!memberSince && <Text style={p.profileMember}>Member since {memberSince}</Text>}
-        </View>
-
-        <View style={p.statsGrid}>
-          <View style={p.statItem}>
-            <Text style={p.statValue}>{entryCount}</Text>
-            <Text style={p.statLabel}>Entries</Text>
-          </View>
-          <View style={[p.statItem, p.statDivider]}>
-            <Text style={[p.statValue, { color: Colors.gold }]}>0</Text>
-            <Text style={p.statLabel}>Wins 🏆</Text>
-          </View>
-          <View style={p.statItem}>
-            <Text style={[p.statValue, { color: Colors.primary }]}>0</Text>
-            <Text style={p.statLabel}>Credits ⚡</Text>
-          </View>
-        </View>
-
-        <View style={p.section}>
-          {[
-            { icon: '🔔', label: 'Notifications' },
-            { icon: '✉️', label: 'Free Entry by Post' },
-            { icon: '📄', label: 'Terms & Conditions' },
-            { icon: '🔒', label: 'Privacy Policy' },
-          ].map((row, i, arr) => (
-            <View key={row.label}>
-              <TouchableOpacity style={p.row} activeOpacity={0.7}>
-                <Text style={{ fontSize: 18, marginRight: 12 }}>{row.icon}</Text>
-                <Text style={p.rowLabel}>{row.label}</Text>
-                <Text style={{ marginLeft: 'auto', color: Colors.muted, fontSize: 16 }}>›</Text>
-              </TouchableOpacity>
-              {i < arr.length - 1 && <View style={p.divider} />}
-            </View>
-          ))}
-          <View style={p.divider} />
-          <TouchableOpacity style={p.row} onPress={handleSignOut} disabled={signingOut} activeOpacity={0.7}>
-            <Text style={{ fontSize: 18, marginRight: 12 }}>🚪</Text>
-            <Text style={[p.rowLabel, { color: Colors.red }]}>{signingOut ? 'Signing out…' : 'Sign Out'}</Text>
+          <TouchableOpacity onPress={handleSignOut} disabled={signingOut}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: 'rgba(255,255,255,0.8)' }}>{signingOut ? 'Signing out…' : 'Sign Out'}</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 60 }}>
+        <View style={{ maxWidth: 900, width: '100%', alignSelf: 'center', paddingHorizontal: 24, paddingTop: 40 }}>
+
+          {/* Profile header */}
+          <View style={{ backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 16, padding: 32, flexDirection: 'row', alignItems: 'center', gap: 24, marginBottom: 20 }}>
+            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff' }}>{initials}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 22, fontWeight: '800', color: Colors.text, marginBottom: 4 }}>{name}</Text>
+              <Text style={{ fontSize: 14, color: Colors.textSec, marginBottom: 4 }}>{email}</Text>
+              {!!memberSince && <Text style={{ fontSize: 12, color: Colors.muted }}>Member since {memberSince}</Text>}
+            </View>
+          </View>
+
+          {/* Stats */}
+          <View style={{ flexDirection: 'row', gap: 16, marginBottom: 20 }}>
+            {[
+              { label: 'Entries', value: entryCount, color: Colors.text },
+              { label: 'Wins 🏆', value: 0, color: Colors.gold },
+              { label: 'Credits ⚡', value: 0, color: Colors.primary },
+            ].map(stat => (
+              <View key={stat.label} style={{ flex: 1, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 12, padding: 20, alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: '800', color: stat.color, marginBottom: 4 }}>{stat.value}</Text>
+                <Text style={{ fontSize: 12, color: Colors.textSec, fontWeight: '600' }}>{stat.label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Settings */}
+          <View style={{ backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: Colors.border, borderRadius: 16, overflow: 'hidden' }}>
+            {[
+              { icon: '🔔', label: 'Notifications' },
+              { icon: '✉️', label: 'Free Entry by Post' },
+              { icon: '📄', label: 'Terms & Conditions' },
+              { icon: '🔒', label: 'Privacy Policy' },
+            ].map((row, i, arr) => (
+              <View key={row.label}>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 16 }} activeOpacity={0.7}>
+                  <Text style={{ fontSize: 18, marginRight: 14 }}>{row.icon}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: Colors.text, flex: 1 }}>{row.label}</Text>
+                  <Text style={{ color: Colors.muted, fontSize: 18 }}>›</Text>
+                </TouchableOpacity>
+                {i < arr.length - 1 && <View style={{ height: 1, backgroundColor: Colors.border, marginHorizontal: 20 }} />}
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
