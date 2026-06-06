@@ -82,8 +82,8 @@ function BrandIcon({ brand, color }: { brand: string; color: string }) {
     return (
       <img
         src={src}
-        width={80}
-        height={80}
+        width={96}
+        height={96}
         alt={brand}
         onError={() => setLogoFailed(true)}
         style={{ display: 'block', objectFit: 'contain' } as any}
@@ -95,7 +95,7 @@ function BrandIcon({ brand, color }: { brand: string; color: string }) {
   const htmlIcon = BRAND_SVG_HTML[brand]
   if (htmlIcon) {
     return (
-      <svg viewBox={htmlIcon.viewBox} width={80} height={80} style={{ display: 'block' } as any}
+      <svg viewBox={htmlIcon.viewBox} width={96} height={96} style={{ display: 'block' } as any}
         dangerouslySetInnerHTML={{ __html: htmlIcon.inner }} />
     )
   }
@@ -105,7 +105,7 @@ function BrandIcon({ brand, color }: { brand: string; color: string }) {
     return <Text style={{ fontSize: 44, fontWeight: '900', color, opacity: 0.9 }}>{brand.charAt(0)}</Text>
   }
   return (
-    <svg viewBox="0 0 24 24" width={80} height={80} fill={color} style={{ display: 'block' } as any}>
+    <svg viewBox="0 0 24 24" width={96} height={96} fill={color} style={{ display: 'block' } as any}>
       <path d={path} />
     </svg>
   )
@@ -479,7 +479,7 @@ export default function HomeWebScreen() {
     return matchTier && matchSearch
   })
 
-  const itemWidth = isMobile ? '49%' : isTablet ? '32%' : '19%'
+  const itemWidth = isMobile ? '48%' : isTablet ? '31%' : '18%'
 
   return (
     <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
   heroCompFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 },
 
   // Competition card
-  compSection: { paddingVertical: 48, paddingHorizontal: 12 },
+  compSection: { paddingVertical: 48, paddingHorizontal: 32, maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any },
   compSectionHeader: { marginBottom: 24, paddingHorizontal: 4 },
   sectionInner: { maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any },
   sectionHeader: { alignItems: 'center', marginBottom: 48 },
@@ -579,18 +579,18 @@ const styles = StyleSheet.create({
   giftCircle1: { position: 'absolute', width: 120, height: 120, borderRadius: 60, backgroundColor: 'rgba(255,255,255,0.08)', top: -30, right: -30 },
   giftCircle2: { position: 'absolute', width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -20, left: -20 },
   giftIconWrap: { alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  giftBrandName: { fontSize: 14, fontWeight: '800', letterSpacing: 0.5, textAlign: 'center' },
+  giftBrandName: { fontSize: 11, fontWeight: '800', letterSpacing: 0.5, textAlign: 'center' },
   giftSvgBox: { width: '72%', height: '72%' },
   giftLabel: { position: 'absolute', bottom: 10, backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 },
   giftLabelText: { fontSize: 9, fontWeight: '800', color: 'rgba(255,255,255,0.9)', letterSpacing: 1.5 },
   compCardLogo: { width: 120, height: 60 },
-  compCardBody: { padding: 14 },
+  compCardBody: { padding: 10 },
   tierRow: { flexDirection: 'row', gap: 6, marginBottom: 8, alignItems: 'center' },
   tierChip: { borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 },
   tierChipText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
   urgentChip: { backgroundColor: Colors.redBg, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 },
   urgentChipText: { fontSize: 10, fontWeight: '700', color: Colors.red, letterSpacing: 0.5 },
-  compCardPrize: { fontSize: 15, fontWeight: '700', color: Colors.text, marginBottom: 12, lineHeight: 20 },
+  compCardPrize: { fontSize: 13, fontWeight: '700', color: Colors.text, marginBottom: 8, lineHeight: 18 },
   progressWrap: { marginBottom: 12 },
   progressBg: { height: 5, backgroundColor: '#F0EBFF', borderRadius: 999, marginBottom: 4 },
   progressFill: { height: '100%', borderRadius: 999 },
