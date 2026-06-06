@@ -236,7 +236,7 @@ function Hero({ featured }: { featured: Pool }) {
   const isMobile = width < 768
   return (
     <View style={styles.hero}>
-      <View style={[styles.heroInner, isMobile && { flexDirection: 'column', gap: 32, alignItems: 'stretch', width: '100%' as any, marginHorizontal: 0, maxWidth: '100%' as any }]}>
+      <View style={[styles.heroInner, isMobile && { flexDirection: 'column', gap: 32, alignItems: 'stretch' }]}>
         {/* Left */}
         <View style={[styles.heroLeft, isMobile && { width: '100%' as any }]}>
           <View style={styles.heroBadge}>
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
 
   // Navbar
   navbar: { backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: Colors.border, position: 'sticky' as any, top: 0, zIndex: 100 },
-  navInner: { maxWidth: MAX, marginHorizontal: 'auto' as any, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 32, paddingVertical: 16 },
+  navInner: { maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 32, paddingVertical: 16 },
   navLogo: { fontSize: 26, fontWeight: '800', color: Colors.primary, letterSpacing: -0.5 },
   navLinks: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   navLinkBtn: { paddingHorizontal: 14, paddingVertical: 8 },
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
 
   // Hero
   hero: { background: 'linear-gradient(135deg, #2D1B69 0%, #4C1D95 50%, #6D28D9 100%)' as any, backgroundColor: '#2D1B69', paddingVertical: 80, paddingHorizontal: 20 },
-  heroInner: { maxWidth: MAX, marginHorizontal: 'auto' as any, flexDirection: 'row', alignItems: 'center', gap: 60 },
+  heroInner: { maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any, flexDirection: 'row', alignItems: 'center', gap: 60 },
   heroLeft: { flex: 1 },
   heroBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 999, paddingHorizontal: 14, paddingVertical: 7, alignSelf: 'flex-start', marginBottom: 24 },
   heroBadgeText: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.9)' },
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   // Competition card
   compSection: { paddingVertical: 48, paddingHorizontal: 12 },
   compSectionHeader: { marginBottom: 24, paddingHorizontal: 4 },
-  sectionInner: { maxWidth: MAX, marginHorizontal: 'auto' as any },
+  sectionInner: { maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any },
   sectionHeader: { alignItems: 'center', marginBottom: 48 },
   sectionTitle: { fontSize: 36, fontWeight: '800', color: Colors.text, letterSpacing: -0.5 },
   sectionSubtitle: { fontSize: 16, color: Colors.textSec, marginTop: 8 },
@@ -631,9 +631,9 @@ const styles = StyleSheet.create({
 
   // Footer
   footer: { backgroundColor: '#1A0A2E', paddingVertical: 60, paddingHorizontal: 20 },
-  footerInner: { maxWidth: MAX, marginHorizontal: 'auto' as any },
-  footerTop: { flexDirection: 'row', gap: 60, marginBottom: 48 },
-  footerBrand: { flex: 1 },
+  footerInner: { maxWidth: MAX, alignSelf: 'center' as any, width: '100%' as any },
+  footerTop: { flexDirection: 'row', flexWrap: 'wrap' as any, gap: 40, marginBottom: 48 },
+  footerBrand: { flex: 1, minWidth: 240 },
   footerLogo: { fontSize: 28, fontWeight: '800', color: '#FFFFFF', marginBottom: 10 },
   footerTagline: { fontSize: 15, color: 'rgba(255,255,255,0.5)', marginBottom: 20 },
   trustBadges: { gap: 8 },
