@@ -142,20 +142,18 @@ export const POOLS: Pool[] = [
 // ─────────────────────────────────────────────────────────────
 // GUMROAD INTEGRATION
 // Replace DEFAULT_GUMROAD_URL with your real Gumroad product URL
-// (e.g. 'https://yourname.gumroad.com/l/tick-pick-entry').
-// For per-competition products, add an entry to GUMROAD_URLS keyed
-// by pool id — these override the default.
+// Default Payhip checkout URL (used for all competitions).
+// To use a different product per competition, add entries to PAYHIP_URLS keyed by pool id.
 // ─────────────────────────────────────────────────────────────
-export const DEFAULT_GUMROAD_URL = 'https://badranalain.gumroad.com/l/spjrva'
+export const DEFAULT_PAYHIP_URL = 'https://payhip.com/b/ak013'
 
-export const GUMROAD_URLS: Record<number, string> = {
-  // 1: 'https://yourname.gumroad.com/l/amazon500',
-  // 2: 'https://yourname.gumroad.com/l/xbox10',
+export const PAYHIP_URLS: Record<number, string> = {
+  // 1: 'https://payhip.com/b/xxxxx',
   // ...add per-pool product URLs here
 }
 
-export function getGumroadUrl(poolId: number): string {
-  return GUMROAD_URLS[poolId] ?? DEFAULT_GUMROAD_URL
+export function getPayhipUrl(poolId: number): string {
+  return PAYHIP_URLS[poolId] ?? DEFAULT_PAYHIP_URL
 }
 
 export const RECENT_WINNERS = [
