@@ -13,7 +13,7 @@ type CardTheme = {
 // svg = use simpleicons CDN via CSS backgroundImage (for brands not in FA5/MCI)
 const SI = (slug: string, color: string) => ({ lib: 'svg' as const, name: slug, svgUrl: `https://cdn.simpleicons.org/${slug}/${color}` })
 const CARD_THEMES: Record<string, CardTheme> = {
-  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: SI('amazon', 'FFFFFF') },
+  'Amazon':      { bg1: '#FF9900', bg2: '#E47911', textColor: '#FFFFFF', icon: SI('amazonprime', 'FFFFFF') },
   'Xbox':        { bg1: '#107C10', bg2: '#0A5A0A', textColor: '#FFFFFF', icon: SI('xbox', 'FFFFFF') },
   'Netflix':     { bg1: '#141414', bg2: '#1A0000', textColor: '#E50914', icon: SI('netflix', 'E50914') },
   'Steam':       { bg1: '#1B2838', bg2: '#2A475E', textColor: '#FFFFFF', icon: SI('steam', 'FFFFFF') },
@@ -21,7 +21,7 @@ const CARD_THEMES: Record<string, CardTheme> = {
   'Roblox':      { bg1: '#FFFFFF', bg2: '#F0F0F0', textColor: '#E2231A', icon: SI('roblox', 'E2231A') },
   'Google Play': { bg1: '#1C1C1C', bg2: '#111111', textColor: '#FFFFFF', icon: SI('googleplay', 'FFFFFF') },
   'Apple':       { bg1: '#1A1A1A', bg2: '#2D2D2D', textColor: '#FFFFFF', icon: SI('apple', 'FFFFFF') },
-  'Uber Eats':   { bg1: '#142328', bg2: '#0A1A1F', textColor: '#06C167', icon: SI('ubereats', '06C167') },
+  'Uber Eats':   { bg1: '#142328', bg2: '#0A1A1F', textColor: '#06C167', icon: SI('uber', '06C167') },
   'Starbucks':   { bg1: '#00704A', bg2: '#005F3E', textColor: '#FFFFFF', icon: SI('starbucks', 'FFFFFF') },
   'PlayStation': { bg1: '#003791', bg2: '#00287A', textColor: '#FFFFFF', icon: SI('playstation', 'FFFFFF') },
   'Microsoft':   { bg1: '#0078D4', bg2: '#005BA1', textColor: '#FFFFFF', icon: SI('microsoft', 'FFFFFF') },
@@ -368,7 +368,7 @@ export default function HomeWebScreen() {
     return matchTier && matchSearch
   })
 
-  const itemWidth = isMobile ? '50%' : isTablet ? '33.33%' : '25%'
+  const itemWidth = isMobile ? '49%' : isTablet ? '32%' : '24%'
 
   return (
     <ScrollView style={styles.root} showsVerticalScrollIndicator={false}>
@@ -454,14 +454,14 @@ const styles = StyleSheet.create({
   heroCompFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 },
 
   // Competition card
-  compSection: { paddingVertical: 64, paddingHorizontal: 20, overflow: 'hidden' as any },
+  compSection: { paddingVertical: 64, paddingHorizontal: 16 },
   compSectionHeader: { marginBottom: 32 },
   sectionInner: { maxWidth: MAX, marginHorizontal: 'auto' as any },
   sectionHeader: { alignItems: 'center', marginBottom: 48 },
   sectionTitle: { fontSize: 36, fontWeight: '800', color: Colors.text, letterSpacing: -0.5 },
   sectionSubtitle: { fontSize: 16, color: Colors.textSec, marginTop: 8 },
-  compGrid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6 },
-  compGridItem: { paddingHorizontal: 6, marginBottom: 12 },
+  compGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  compGridItem: { marginBottom: 12 },
   compCard: { backgroundColor: '#FFFFFF', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } },
   compCardImage: { height: 160, alignItems: 'center', justifyContent: 'center', position: 'relative' },
   timePill: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
