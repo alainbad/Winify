@@ -42,8 +42,9 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
       <View style={[StyleSheet.absoluteFillObject, { backgroundColor: theme.bg2, opacity: 0.45 }]} />
       <View style={styles.giftCircle1} />
       <View style={styles.giftCircle2} />
-      {ic?.lib === 'fa5' && <FontAwesome5 name={ic.name as any} size={ic.size ?? 64} color={theme.textColor} brand />}
-      {ic?.lib === 'mci' && <MaterialCommunityIcons name={ic.name as any} size={ic.size ?? 64} color={theme.textColor} />}
+      <Text style={{ fontSize: 52, fontWeight: '900', color: theme.textColor, opacity: 0.9, letterSpacing: -2 }}>
+        {pool.brand.charAt(0)}
+      </Text>
       <Text style={[styles.giftBrandName, { color: theme.textColor }]}>{pool.brand}</Text>
       <View style={styles.giftLabel}>
         <Text style={styles.giftLabelText}>GIFT CARD</Text>
@@ -377,19 +378,17 @@ export default function HomeWebScreen() {
 
       {/* Competitions Section */}
       <View style={styles.compSection}>
-        <View style={styles.sectionInner}>
-          <View style={styles.compSectionHeader}>
-            <Text style={[styles.sectionTitle, isMobile && { fontSize: 26 }]}>Live Competitions</Text>
-            <Text style={styles.sectionSubtitle}>{POOLS.length} draws live now — new ones added daily</Text>
-          </View>
-          <FilterBar active={filter} onSelect={setFilter} search={search} onSearch={setSearch} />
-          <View style={styles.compGrid}>
-            {pools.map(p => (
-              <View key={p.id} style={[styles.compGridItem, { width: itemWidth }]}>
-                <CompCard pool={p} />
-              </View>
-            ))}
-          </View>
+        <View style={styles.compSectionHeader}>
+          <Text style={[styles.sectionTitle, isMobile && { fontSize: 26 }]}>Live Competitions</Text>
+          <Text style={styles.sectionSubtitle}>{POOLS.length} draws live now — new ones added daily</Text>
+        </View>
+        <FilterBar active={filter} onSelect={setFilter} search={search} onSearch={setSearch} />
+        <View style={styles.compGrid}>
+          {pools.map(p => (
+            <View key={p.id} style={[styles.compGridItem, { width: itemWidth }]}>
+              <CompCard pool={p} />
+            </View>
+          ))}
         </View>
       </View>
 
@@ -453,14 +452,14 @@ const styles = StyleSheet.create({
   heroCompFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 },
 
   // Competition card
-  compSection: { paddingVertical: 64, paddingHorizontal: 16 },
-  compSectionHeader: { marginBottom: 32 },
+  compSection: { paddingVertical: 48, paddingHorizontal: 12 },
+  compSectionHeader: { marginBottom: 24, paddingHorizontal: 4 },
   sectionInner: { maxWidth: MAX, marginHorizontal: 'auto' as any },
   sectionHeader: { alignItems: 'center', marginBottom: 48 },
   sectionTitle: { fontSize: 36, fontWeight: '800', color: Colors.text, letterSpacing: -0.5 },
   sectionSubtitle: { fontSize: 16, color: Colors.textSec, marginTop: 8 },
-  compGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  compGridItem: { marginBottom: 12 },
+  compGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 as any },
+  compGridItem: {},
   compCard: { backgroundColor: '#FFFFFF', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 16, shadowOffset: { width: 0, height: 4 } },
   compCardImage: { height: 160, alignItems: 'center', justifyContent: 'center', position: 'relative' },
   timePill: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 },
