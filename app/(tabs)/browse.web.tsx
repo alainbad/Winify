@@ -69,7 +69,7 @@ function Navbar() {
     <View style={styles.navbar}>
       <View style={styles.navInner}>
         <TouchableOpacity onPress={() => router.push('/')}>
-          <Text style={styles.navLogo}>Winify</Text>
+          <Text style={styles.navLogo}>Tick Pick</Text>
         </TouchableOpacity>
         <View style={styles.navLinks}>
           {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
@@ -227,7 +227,7 @@ function Sidebar({
 
       {/* Trust */}
       <View style={styles.sideTrust}>
-        <Text style={styles.sideTrustTitle}>Why Winify?</Text>
+        <Text style={styles.sideTrustTitle}>Why Tick Pick?</Text>
         {['✓ RANDOM.ORG verified draws', '✓ Instant prize delivery', '✓ 12,400+ winners', '✓ £2 flat entry fee'].map(t => (
           <Text key={t} style={styles.sideTrustItem}>{t}</Text>
         ))}
@@ -353,8 +353,8 @@ export default function BrowseWebScreen() {
       <View style={styles.footer}>
         <View style={styles.footerInner}>
           <View style={styles.footerBottom}>
-            <Text style={styles.footerLogo}>Winify</Text>
-            <Text style={styles.footerCopy}>© 2026 Winify. All rights reserved. Competitions are open to users aged 18+.</Text>
+            <Text style={styles.footerLogo}>Tick Pick</Text>
+            <Text style={styles.footerCopy}>© 2026 Tick Pick. All rights reserved. Competitions are open to users aged 18+.</Text>
           </View>
         </View>
       </View>

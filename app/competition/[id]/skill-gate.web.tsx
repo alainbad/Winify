@@ -60,7 +60,7 @@ export default function SkillGateWeb() {
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#A78BFA', fontSize: 14 }}>●</Text>
-            <Text style={s.brandName}>Winify</Text>
+            <Text style={s.brandName}>Tick Pick</Text>
           </View>
         </View>
       </View>
@@ -134,7 +134,7 @@ export default function SkillGateWeb() {
           )}
         </View>
 
-        <Text style={s.footer}>🔒 Anti-bot verification · Powered by Winify</Text>
+        <Text style={s.footer}>🔒 Anti-bot verification · Powered by Tick Pick</Text>
       </View>
     </View>
   )

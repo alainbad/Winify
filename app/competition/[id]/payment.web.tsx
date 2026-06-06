@@ -92,7 +92,7 @@ export default function PaymentWeb() {
 
     const url = getGumroadUrl(pool.id)
     const successUrl = `${window.location.origin}/competition/${pool.id}/success`
-    const checkoutUrl = `${url}?wanted=true&referrer=winify&redirect_to=${encodeURIComponent(successUrl)}`
+    const checkoutUrl = `${url}?wanted=true&referrer=tickpick&redirect_to=${encodeURIComponent(successUrl)}`
 
     // Try the Gumroad overlay first; fall back to a redirect.
     const w = window as any
@@ -115,7 +115,7 @@ export default function PaymentWeb() {
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: Colors.primary, fontSize: 14 }}>●</Text>
-            <Text style={s.brandName}>Winify</Text>
+            <Text style={s.brandName}>Tick Pick</Text>
           </View>
         </View>
       </View>

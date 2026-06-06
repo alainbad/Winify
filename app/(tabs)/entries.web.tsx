@@ -105,7 +105,7 @@ export default function EntriesWeb() {
         <View style={s.topNavInner}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900' }}>●</Text>
-            <Text style={s.brandName}>Winify</Text>
+            <Text style={s.brandName}>Tick Pick</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 28 }}>
             <TouchableOpacity onPress={() => router.push('/')}><Text style={s.navItem}>Competitions</Text></TouchableOpacity>
@@ -138,7 +138,7 @@ export default function EntriesWeb() {
               You can enter any competition for free by post. Hand-write your name, address, and competition name on a postcard and send to:
             </Text>
             <View style={s.postalAddress}>
-              <Text style={s.postalAddressText}>Winify Competitions Ltd</Text>
+              <Text style={s.postalAddressText}>Tick Pick Competitions Ltd</Text>
               <Text style={s.postalAddressText}>PO Box 1234</Text>
               <Text style={s.postalAddressText}>London, EC1A 1BB</Text>
               <Text style={s.postalAddressText}>United Kingdom</Text>

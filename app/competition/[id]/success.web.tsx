@@ -84,7 +84,7 @@ export default function SuccessWeb() {
         <View style={s.topNavInner}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900' }}>●</Text>
-            <Text style={s.brandName}>Winify</Text>
+            <Text style={s.brandName}>Tick Pick</Text>
           </View>
         </View>
       </View>

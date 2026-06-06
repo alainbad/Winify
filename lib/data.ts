@@ -58,7 +58,7 @@ export const POOLS: Pool[] = [
   { id: 9, prize: '$10 Uber Eats Voucher', brand: 'Uber Eats', logo: cb('ubereats.com'), bgColor: '#000000', emoji: '🍔',
     tier: 'MICRO', entries: 6, total: 22, pct: 27, time: '7d 0h', price: 2,
     accent: '#06C167', accentBg: '#ECFDF5', hot: false, featured: false,
-    desc: 'Free dinner on Winify.' },
+    desc: 'Free dinner, delivered.' },
   { id: 10, prize: '$15 Starbucks Card', brand: 'Starbucks', logo: cb('starbucks.com'), bgColor: '#FFFFFF', emoji: '☕',
     tier: 'MICRO', entries: 12, total: 22, pct: 55, time: '5d 18h', price: 2,
     accent: '#006241', accentBg: '#ECFDF5', hot: false, featured: false,
@@ -142,7 +142,7 @@ export const POOLS: Pool[] = [
 // ─────────────────────────────────────────────────────────────
 // GUMROAD INTEGRATION
 // Replace DEFAULT_GUMROAD_URL with your real Gumroad product URL
-// (e.g. 'https://yourname.gumroad.com/l/winify-entry').
+// (e.g. 'https://yourname.gumroad.com/l/tick-pick-entry').
 // For per-competition products, add an entry to GUMROAD_URLS keyed
 // by pool id — these override the default.
 // ─────────────────────────────────────────────────────────────

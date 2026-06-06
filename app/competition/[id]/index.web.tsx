@@ -145,7 +145,7 @@ export default function CompetitionDetailWeb() {
         <View style={s.topNavInner}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={{ color: Colors.primary, fontSize: 18, fontWeight: '900' }}>●</Text>
-            <Text style={s.brandName}>Winify</Text>
+            <Text style={s.brandName}>Tick Pick</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 28 }}>
             <TouchableOpacity onPress={() => router.push('/')}><Text style={s.navItem}>Instant Wins</Text></TouchableOpacity>
@@ -220,7 +220,7 @@ export default function CompetitionDetailWeb() {
                     outline: 'none',
                     cursor: 'pointer',
                   } as any}
-                  className="winify-slider"
+                  className="tickpick-slider"
                 />
                 <TouchableOpacity onPress={() => changeTickets(tickets + 1)} style={s.stepperBtn}>
                   <Text style={s.stepperText}>+</Text>
@@ -228,7 +228,7 @@ export default function CompetitionDetailWeb() {
               </View>
               {/* @ts-ignore */}
               <style>{`
-                .winify-slider::-webkit-slider-thumb {
+                .tickpick-slider::-webkit-slider-thumb {
                   -webkit-appearance: none;
                   appearance: none;
                   width: 20px;
@@ -239,7 +239,7 @@ export default function CompetitionDetailWeb() {
                   cursor: pointer;
                   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
                 }
-                .winify-slider::-moz-range-thumb {
+                .tickpick-slider::-moz-range-thumb {
                   width: 20px;
                   height: 20px;
                   border-radius: 50%;

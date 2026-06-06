@@ -46,7 +46,7 @@ export default function AccountScreen() {
 
         {/* How It Works */}
         <View style={styles.howCard}>
-          <Text style={styles.howTitle}>How Winify Works</Text>
+          <Text style={styles.howTitle}>How Tick Pick Works</Text>
           {[
             { n: '1', t: 'Browse competitions', d: 'Find a prize pool you like.' },
             { n: '2', t: 'Answer a skill question', d: 'Prove you\'re human — no bots!' },

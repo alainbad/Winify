@@ -60,7 +60,7 @@ export default function EntriesScreen() {
             You can enter any competition for free by post. Hand-write your name, address, and competition name on a postcard and send to:
           </Text>
           <View style={styles.postalAddress}>
-            <Text style={styles.postalAddressText}>Winify Competitions Ltd</Text>
+            <Text style={styles.postalAddressText}>Tick Pick Competitions Ltd</Text>
             <Text style={styles.postalAddressText}>PO Box 1234</Text>
             <Text style={styles.postalAddressText}>London, EC1A 1BB</Text>
             <Text style={styles.postalAddressText}>United Kingdom</Text>

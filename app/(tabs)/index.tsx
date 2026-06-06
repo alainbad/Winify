@@ -165,7 +165,7 @@ export default function HomeScreen() {
         <Text style={{ fontSize: 12, color: Colors.text }}>▊▊▊ WiFi 🔋</Text>
       </View>
       <View style={styles.navBar}>
-        <Text style={styles.logo}>Winify</Text>
+        <Text style={styles.logo}>Tick Pick</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <View style={styles.creditsPill}>
             <Text style={{ fontSize: 14 }}>⚡</Text>

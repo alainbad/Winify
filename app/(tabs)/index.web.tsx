@@ -69,7 +69,7 @@ function Navbar() {
   return (
     <View style={styles.navbar}>
       <View style={styles.navInner}>
-        <Text style={styles.navLogo}>Winify</Text>
+        <Text style={styles.navLogo}>Tick Pick</Text>
         <View style={styles.navLinks}>
           {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
             <TouchableOpacity key={link} style={styles.navLinkBtn}>
@@ -324,7 +324,7 @@ function Footer() {
       <View style={styles.footerInner}>
         <View style={styles.footerTop}>
           <View style={styles.footerBrand}>
-            <Text style={styles.footerLogo}>Winify</Text>
+            <Text style={styles.footerLogo}>Tick Pick</Text>
             <Text style={styles.footerTagline}>Premium competitions for everyone.</Text>
             <View style={styles.trustBadges}>
               {['✓ RANDOM.ORG Verified', '✓ Instant Payouts', '✓ 12,400+ Winners'].map(b => (
@@ -348,7 +348,7 @@ function Footer() {
           </View>
         </View>
         <View style={styles.footerBottom}>
-          <Text style={styles.footerCopy}>© 2026 Winify. All rights reserved. Competitions are open to users aged 18+.</Text>
+          <Text style={styles.footerCopy}>© 2026 Tick Pick. All rights reserved. Competitions are open to users aged 18+.</Text>
         </View>
       </View>
     </View>
