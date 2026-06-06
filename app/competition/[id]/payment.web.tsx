@@ -114,18 +114,18 @@ export default function PaymentWeb() {
     )
   }
 
-  async function handlePay() {
+  function handlePay() {
     if (!agreed || loading || !pool) return
     setLoading(true)
-    // Save entry before opening Gumroad so it's recorded regardless of what Gumroad does
-    if (user && session) {
-      await dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session.access_token)
-        .catch(() => {})
-    }
     const url = getGumroadUrl(pool.id)
     const checkoutUrl = `${url}?wanted=true&referrer=tickpick`
-    // Open Gumroad in new tab, send user straight to success page
+    // Open Gumroad immediately (must be synchronous to avoid popup blocker)
     window.open(checkoutUrl, '_blank')
+    // Save entry and navigate to success in background
+    if (user && session) {
+      dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session.access_token)
+        .catch(() => {})
+    }
     router.replace(`/competition/${pool.id}/success`)
   }
 
