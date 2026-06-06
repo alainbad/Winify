@@ -161,7 +161,7 @@ export default function CompetitionDetailWeb() {
   }
 
   return (
-    <View style={{ minHeight: '100vh' as any, backgroundColor: '#FFFFFF' }}>
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
       {/* Top nav */}
       <View style={s.topNav}>
         <View style={s.topNavInner}>
@@ -177,7 +177,7 @@ export default function CompetitionDetailWeb() {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
         <View style={s.page}>
           <TouchableOpacity onPress={() => router.back()} style={s.backBtn}>
             <Text style={s.backArrow}>←</Text>
