@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, TextInput, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Image, TextInput, StyleSheet, useWindowDimensions } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -66,24 +66,30 @@ function GiftCardThumb({ pool, style, children }: { pool: Pool; style?: any; chi
 
 // ─── Navbar ──────────────────────────────────────────────────────────────────
 function Navbar() {
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
   return (
     <View style={styles.navbar}>
       <View style={styles.navInner}>
         <Text style={styles.navLogo}>Tick Pick</Text>
-        <View style={styles.navLinks}>
-          {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
-            <TouchableOpacity key={link} style={styles.navLinkBtn}>
-              <Text style={styles.navLinkText}>{link}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {!isMobile && (
+          <View style={styles.navLinks}>
+            {['Home', 'Browse', 'How It Works', 'Winners'].map(link => (
+              <TouchableOpacity key={link} style={styles.navLinkBtn}>
+                <Text style={styles.navLinkText}>{link}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         <View style={styles.navActions}>
           <TouchableOpacity style={styles.loginBtn}>
             <Text style={styles.loginBtnText}>Login</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.signupBtn}>
-            <Text style={styles.signupBtnText}>Sign Up</Text>
-          </TouchableOpacity>
+          {!isMobile && (
+            <TouchableOpacity style={styles.signupBtn}>
+              <Text style={styles.signupBtnText}>Sign Up</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -135,16 +141,18 @@ function HeroCompCard({ pool }: { pool: Pool }) {
 
 // ─── Hero Section ─────────────────────────────────────────────────────────
 function Hero({ featured }: { featured: Pool }) {
+  const { width } = useWindowDimensions()
+  const isMobile = width < 768
   return (
     <View style={styles.hero}>
-      <View style={styles.heroInner}>
+      <View style={[styles.heroInner, isMobile && { flexDirection: 'column', gap: 32, alignItems: 'stretch' }]}>
         {/* Left */}
         <View style={styles.heroLeft}>
           <View style={styles.heroBadge}>
             <View style={styles.liveDotGreen} />
             <Text style={styles.heroBadgeText}>38 live competitions right now</Text>
           </View>
-          <Text style={styles.heroHeadline}>Win Big{'\n'}for Just $2</Text>
+          <Text style={[styles.heroHeadline, isMobile && { fontSize: 42, lineHeight: 48 }]}>Win Big{'\n'}for Just $2</Text>
           <Text style={styles.heroSubtext}>
             Enter premium prize draws with a single ticket. Every draw is provably fair,
             powered by RANDOM.ORG. Winners paid instantly.
@@ -171,7 +179,7 @@ function Hero({ featured }: { featured: Pool }) {
           </View>
         </View>
         {/* Right */}
-        <View style={styles.heroRight}>
+        <View style={[styles.heroRight, isMobile && { width: '100%' }]}>
           <HeroCompCard pool={featured} />
         </View>
       </View>
