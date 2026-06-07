@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Platform } from 'react-native'
+import { Platform, AppState } from 'react-native'
 import { getSession, getSessionAsync, type AuthSession } from './auth'
 
 export type AuthUser = AuthSession['user'] | null
@@ -10,7 +10,7 @@ export function useAuth() {
 
   useEffect(() => {
     if (Platform.OS === 'web') {
-      // Web: sync read from localStorage, then listen for cross-tab changes
+      // Web: sync read, then listen for same-tab and cross-tab changes
       setSession(getSession())
       setLoading(false)
       function onStorage(e: StorageEvent) {
@@ -19,13 +19,20 @@ export function useAuth() {
         }
       }
       window.addEventListener('storage', onStorage)
-      return () => window.removeEventListener('storage', onStorage)
+      // Re-read on tab focus (handles navigate-back-after-login)
+      function onFocus() { setSession(getSession()) }
+      window.addEventListener('focus', onFocus)
+      return () => {
+        window.removeEventListener('storage', onStorage)
+        window.removeEventListener('focus', onFocus)
+      }
     } else {
-      // Native: async read from AsyncStorage
-      getSessionAsync().then(s => {
-        setSession(s)
-        setLoading(false)
+      // Native: async read, re-read when app comes to foreground
+      getSessionAsync().then(s => { setSession(s); setLoading(false) })
+      const sub = AppState.addEventListener('change', state => {
+        if (state === 'active') getSessionAsync().then(setSession)
       })
+      return () => sub.remove()
     }
   }, [])
 

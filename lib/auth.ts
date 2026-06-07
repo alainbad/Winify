@@ -64,10 +64,16 @@ export async function getSessionAsync(): Promise<AuthSession | null> {
 
 async function saveSession(s: AuthSession) {
   await storage.set(SESSION_KEY, JSON.stringify(s))
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    window.dispatchEvent(new StorageEvent('storage', { key: SESSION_KEY, newValue: JSON.stringify(s) }))
+  }
 }
 
 export async function clearSession() {
   await storage.remove(SESSION_KEY)
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    window.dispatchEvent(new StorageEvent('storage', { key: SESSION_KEY, newValue: null }))
+  }
 }
 
 export async function signUp(email: string, password: string, fullName: string, phone?: string): Promise<{ session: AuthSession | null; error: string | null }> {
