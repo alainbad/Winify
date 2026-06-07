@@ -165,7 +165,12 @@ export default function HomeScreen() {
         <Text style={{ fontSize: 12, color: Colors.text }}>▊▊▊ WiFi 🔋</Text>
       </View>
       <View style={styles.navBar}>
-        <Text style={styles.logo}>Tick Pick</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={{ width: 32, height: 32, borderRadius: 9, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 16 }}>⭐</Text>
+            </View>
+            <Text style={[styles.logo]}><Text style={{ color: Colors.primary }}>Tick</Text><Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
+          </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <View style={styles.creditsPill}>
             <Text style={{ fontSize: 14 }}>⚡</Text>

@@ -20,7 +20,12 @@ export default function BrowseScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.bg }}>
       <View style={styles.header}>
-        <Text style={styles.title}>Browse</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 9, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16 }}>⭐</Text>
+          </View>
+          <Text style={styles.title}><Text style={{ color: Colors.primary }}>Tick</Text><Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
+        </View>
       </View>
       <View style={styles.searchBar}>
         <Text style={{ fontSize: 16, color: Colors.muted }}>🔍</Text>

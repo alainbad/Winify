@@ -109,13 +109,16 @@ export default function EntriesWeb() {
     <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
       <View style={s.topNav}>
         <View style={s.topNavInner}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 18, fontWeight: '900' }}>●</Text>
-            <Text style={s.brandName}>Tick Pick</Text>
-          </View>
+          <TouchableOpacity onPress={() => router.push('/')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+              <rect width="40" height="40" rx="11" fill="white"/>
+              <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="#7C3AED"/>
+            </svg>
+            <Text style={s.brandName}>Tick<Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
+          </TouchableOpacity>
           <View style={{ flexDirection: 'row', gap: 28 }}>
-            <TouchableOpacity onPress={() => router.push('/')}><Text style={s.navItem}>Competitions</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/browse')}><Text style={s.navItem}>Browse</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/winners')}><Text style={s.navItem}>Winners</Text></TouchableOpacity>
           </View>
         </View>
       </View>
