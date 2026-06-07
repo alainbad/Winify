@@ -19,7 +19,7 @@
   />
 
   <!-- TickPick wordmark -->
-  <text x="536" y="278" font-size="80" font-weight="800" font-family="Arial, sans-serif" fill="#7C3AED">Tick</text>
+  <text x="536" y="278" font-size="80" font-weight="800" font-family="Arial, sans-serif" fill="white">Tick</text>
   <text x="718" y="278" font-size="80" font-weight="800" font-family="Arial, sans-serif" fill="#F59E0B">Pick</text>
 
   <!-- Tagline -->
