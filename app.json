@@ -7,7 +7,7 @@
     "userInterfaceStyle": "light",
     "ios": { "supportsTablet": false, "bundleIdentifier": "com.tickpick.app" },
     "android": { "package": "com.tickpick.app" },
-    "web": { "bundler": "metro", "favicon": "./public/favicon.svg" },
+    "web": { "bundler": "metro" },
     "plugins": ["expo-router"],
     "scheme": "tickpick",
     "experiments": {

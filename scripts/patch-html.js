@@ -8,8 +8,8 @@ const metaTags = `
     <meta name="description" content="Win amazing prizes with Tick Pick. Enter competitions from $5 and walk away with cash, gadgets, and more." />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
