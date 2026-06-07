@@ -1,0 +1,2 @@
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS sale_id text UNIQUE;
+ALTER TABLE entries ADD COLUMN IF NOT EXISTS gumroad_order text;

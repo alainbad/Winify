@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput,
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool, getGumroadUrl } from '@/lib/data'
-import { dbInsert } from '@/lib/auth'
 import { useAuth } from '@/lib/useAuth'
 
 const LOGO_DEV_TOKEN = 'pk_OfBoU3ocR7WzMrZfenk7Iw'
@@ -105,18 +104,13 @@ export default function PaymentWeb() {
   }
 
   function handlePay() {
-    if (!agreed || loading || !pool) return
+    if (!agreed || loading || !pool || !user) return
     setLoading(true)
-    const checkoutUrl = `${getGumroadUrl(pool.id)}?wanted=true&referrer=tickpick`
-    // Open Gumroad immediately (must be synchronous to avoid popup blocker)
-    window.open(checkoutUrl, '_blank')
-    // Save entry in background
-    if (user && session) {
-      dbInsert('entries', { user_id: user.id, pool_id: pool.id, tickets: 1, amount_paid: pool.price }, session.access_token)
-        .catch(() => {})
-    }
-    // Navigate to success page
-    window.location.href = `/competition/${pool.id}/success`
+    const passthrough = encodeURIComponent(JSON.stringify({ user_id: user.id, pool_id: pool.id }))
+    const returnUrl = encodeURIComponent(`https://tick-pick.com/competition/${pool.id}/success`)
+    const checkoutUrl = `${getGumroadUrl(pool.id)}?wanted=true&referrer=tickpick&passthrough=${passthrough}&return_url=${returnUrl}`
+    // Navigate in same tab so Gumroad can redirect back after payment
+    window.location.href = checkoutUrl
   }
 
   const fee = pool.price.toFixed(2)
