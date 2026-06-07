@@ -177,9 +177,6 @@ function Navbar() {
         </TouchableOpacity>
         {!isMobile && (
           <View style={styles.navLinks}>
-            <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/')}>
-              <Text style={styles.navLinkText}>Home</Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.navLinkBtn} onPress={() => router.push('/browse')}>
               <Text style={styles.navLinkText}>Browse</Text>
             </TouchableOpacity>
