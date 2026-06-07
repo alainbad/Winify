@@ -460,14 +460,31 @@ function Footer() {
           </View>
           <View style={styles.footerLinks}>
             {[
-              { heading: 'Compete', links: ['Browse All', 'MICRO Draws', 'VOLUME Draws', 'MEGA Draws'] },
-              { heading: 'Company', links: ['About Us', 'How It Works', 'Past Winners', 'Blog'] },
-              { heading: 'Support', links: ['Help Centre', 'Contact Us', 'Terms', 'Privacy'] },
+              { heading: 'Compete', links: [
+                { label: 'Browse All', href: '/browse' },
+                { label: 'MICRO Draws', href: '/browse' },
+                { label: 'VOLUME Draws', href: '/browse' },
+                { label: 'MEGA Draws', href: '/browse' },
+              ]},
+              { heading: 'Company', links: [
+                { label: 'About Us', href: '/about' },
+                { label: 'How It Works', href: '/#how-it-works' },
+                { label: 'Past Winners', href: '/winners' },
+                { label: 'Blog', href: '/blog' },
+              ]},
+              { heading: 'Support', links: [
+                { label: 'Help Centre', href: '/help' },
+                { label: 'Contact Us', href: '/contact' },
+                { label: 'Terms', href: '/terms' },
+                { label: 'Privacy', href: '/privacy' },
+              ]},
             ].map(col => (
               <View key={col.heading} style={styles.footerCol}>
                 <Text style={styles.footerColHead}>{col.heading}</Text>
                 {col.links.map(l => (
-                  <TouchableOpacity key={l}><Text style={styles.footerLink}>{l}</Text></TouchableOpacity>
+                  <a key={l.label} href={l.href} style={{ textDecoration: 'none' }}>
+                    <Text style={styles.footerLink}>{l.label}</Text>
+                  </a>
                 ))}
               </View>
             ))}
