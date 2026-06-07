@@ -2,10 +2,10 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { Colors } from '@/constants/theme'
 
 const POSTS = [
-  { date: 'June 2026', tag: 'How It Works', title: 'How RANDOM.ORG Ensures Every Tick Pick Draw Is 100% Fair', excerpt: 'We use certified true random numbers generated from atmospheric noise — not computer algorithms — to pick every winner. Here\'s why that matters.' },
-  { date: 'June 2026', tag: 'Winners', title: 'Our First MEGA Draw Winner: $1,000 Voucher Claimed in 12 Hours', excerpt: 'Last week we completed our first MEGA tier competition. The pool filled in under 3 days and the winner was notified and paid within 12 hours.' },
-  { date: 'May 2026', tag: 'Platform', title: 'Introducing VOLUME Tier: More Prizes, More Draws', excerpt: 'Following strong demand for mid-range competitions, we\'ve launched our VOLUME tier with $150, $200, and $300 prize pools.' },
-  { date: 'May 2026', tag: 'Tips', title: '5 Tips to Maximise Your Chances on Tick Pick', excerpt: 'While every draw is random, there are smart strategies to get more value from your entries. Here\'s what our most active users do differently.' },
+  { date: 'June 2026', tag: 'How It Works', href: '/blog/random-org-fairness', title: 'How RANDOM.ORG Ensures Every Tick Pick Draw Is 100% Fair', excerpt: 'We use certified true random numbers generated from atmospheric noise — not computer algorithms — to pick every winner. Here\'s why that matters.' },
+  { date: 'June 2026', tag: 'Winners', href: '/blog/first-mega-winner', title: 'Our First MEGA Draw Winner: $1,000 Voucher Claimed in 12 Hours', excerpt: 'Last week we completed our first MEGA tier competition. The pool filled in under 3 days and the winner was notified and paid within 12 hours.' },
+  { date: 'May 2026', tag: 'Platform', href: '/blog/volume-tier', title: 'Introducing VOLUME Tier: More Prizes, More Draws', excerpt: 'Following strong demand for mid-range competitions, we\'ve launched our VOLUME tier with $150, $200, and $300 prize pools.' },
+  { date: 'May 2026', tag: 'Tips', href: '/blog/5-tips', title: '5 Tips to Maximise Your Chances on Tick Pick', excerpt: 'While every draw is random, there are smart strategies to get more value from your entries. Here\'s what our most active users do differently.' },
 ]
 
 export default function BlogPage() {
@@ -33,9 +33,13 @@ export default function BlogPage() {
               <View style={styles.tag}><Text style={styles.tagText}>{p.tag}</Text></View>
               <Text style={styles.date}>{p.date}</Text>
             </View>
-            <Text style={styles.postTitle}>{p.title}</Text>
+            <a href={p.href} style={{ textDecoration: 'none' }}>
+              <Text style={styles.postTitle}>{p.title}</Text>
+            </a>
             <Text style={styles.postExcerpt}>{p.excerpt}</Text>
-            <Text style={styles.readMore}>Read more →</Text>
+            <a href={p.href} style={{ textDecoration: 'none' }}>
+              <Text style={styles.readMore}>Read more →</Text>
+            </a>
           </View>
         ))}
       </View>
