@@ -38,8 +38,11 @@ export default function WinnersPage() {
       <View style={{ backgroundColor: Colors.primary }}>
         <View style={{ maxWidth: 1280, width: '100%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 32, paddingVertical: 14 }}>
           <TouchableOpacity onPress={() => router.push('/')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={{ color: Colors.primary, fontSize: 18, fontWeight: '900', color: '#fff' }}>●</Text>
-            <Text style={{ fontSize: 18, fontWeight: '900', color: '#fff', letterSpacing: -0.4 }}>Tick Pick</Text>
+            <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+              <rect width="40" height="40" rx="11" fill="#7C3AED"/>
+              <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="white"/>
+            </svg>
+            <Text style={{ fontSize: 20, fontWeight: '900', color: '#fff', letterSpacing: -0.5 }}>Tick<Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
           </TouchableOpacity>
           <View style={{ flexDirection: 'row', gap: 28 }}>
             <TouchableOpacity onPress={() => router.push('/')}><Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>Instant Wins</Text></TouchableOpacity>

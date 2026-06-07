@@ -93,6 +93,13 @@ export default function AdminPage() {
     <ScrollView style={{ flex: 1, backgroundColor: Colors.bg }}>
       {/* Header */}
       <View style={{ backgroundColor: Colors.primary, paddingHorizontal: 32, paddingTop: 48, paddingBottom: 24 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+          <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="11" fill="#7C3AED"/>
+            <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="white"/>
+          </svg>
+          <Text style={{ fontSize: 20, fontWeight: '900', color: '#fff', letterSpacing: -0.5 }}>Tick<Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
+        </View>
         <Text style={{ fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.6)', letterSpacing: 1.5, marginBottom: 4 }}>ADMIN PANEL</Text>
         <Text style={{ fontSize: 28, fontWeight: '900', color: '#fff' }}>Draw Manager</Text>
         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>Trigger RANDOM.ORG draws for completed pools</Text>
