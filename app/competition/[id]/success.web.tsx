@@ -87,13 +87,13 @@ export default function SuccessWeb() {
     <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
       <View style={s.topNav}>
         <View style={s.topNavInner}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <TouchableOpacity onPress={() => router.push('/')} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
-              <rect width="40" height="40" rx="11" fill="#7C3AED"/>
-              <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="white"/>
+              <rect width="40" height="40" rx="11" fill="white"/>
+              <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="#7C3AED"/>
             </svg>
             <Text style={{ fontSize: 20, fontWeight: '900', color: '#fff', letterSpacing: -0.5 }}>Tick<Text style={{ color: '#F59E0B' }}>Pick</Text></Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
