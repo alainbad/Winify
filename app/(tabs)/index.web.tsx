@@ -413,7 +413,7 @@ function HowItWorks() {
   const { width } = useWindowDimensions()
   const isMobile = width < 768
   const steps = [
-    { icon: '🎯', title: 'Pick a Competition', desc: 'Browse hundreds of live prize draws. From $10 gift cards to $1,000 vouchers.' },
+    { icon: '🎯', title: 'Pick a Competition', desc: 'Browse hundreds of live prize draws. From $50 gift cards to $1,000 vouchers.' },
     { icon: '🎟️', title: 'Enter for $5', desc: 'One flat price, no hidden fees. Every ticket gives you a fair shot at winning.' },
     { icon: '🎲', title: 'Fair Draw', desc: 'When tickets sell out, a winner is picked by RANDOM.ORG — provably fair every time.' },
     { icon: '🏆', title: 'Claim Your Prize', desc: 'Winners are notified instantly and prizes delivered within 24 hours.' },
