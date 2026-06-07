@@ -113,6 +113,7 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
   const { user, session } = useAuth()
   const [entryCount, setEntryCount] = useState(0)
   const [signingOut, setSigningOut] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   const name: string = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
   const email: string = user?.email || ''
@@ -129,41 +130,25 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
       .catch(() => {})
   }, [user])
 
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   async function handleSignOut() {
     setSigningOut(true)
     await signOut()
     onSignOut()
   }
 
-  const dash: React.CSSProperties = {
-    display: 'flex',
-    minHeight: '100vh',
-    background: '#F4F6FA',
-    fontFamily: 'inherit',
-  }
-
-  const sidebar: React.CSSProperties = {
-    width: 260,
-    minWidth: 260,
-    background: '#fff',
-    borderRight: '1px solid #E5E7EB',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '32px 24px',
-  }
-
-  const main: React.CSSProperties = {
-    flex: 1,
-    padding: '40px 48px',
-    overflowY: 'auto',
-  }
-
   const sectionCard: React.CSSProperties = {
     background: '#fff',
     border: '1px solid #E5E7EB',
     borderRadius: 12,
-    padding: '24px 28px',
-    marginBottom: 24,
+    padding: isMobile ? '20px 16px' : '24px 28px',
+    marginBottom: 16,
   }
 
   const sectionTitle: React.CSSProperties = {
@@ -180,7 +165,7 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
     background: '#F9FAFB',
     border: '1px solid #E5E7EB',
     borderRadius: 10,
-    padding: '20px 24px',
+    padding: isMobile ? '14px 12px' : '20px 24px',
     flex: 1,
   }
 
@@ -204,11 +189,114 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
     color: '#7C3AED',
   }
 
+  if (isMobile) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F4F6FA', fontFamily: 'inherit' }}>
+        {/* Mobile top bar */}
+        <div style={{ background: '#7C3AED', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+              <rect width="40" height="40" rx="11" fill="rgba(255,255,255,0.2)"/>
+              <path d="M20 9l2.8 6.1 6.1.9-4.4 4.3 1.05 6.1L20 23.2l-5.55 3.2 1.05-6.1-4.4-4.3 6.1-.9z" fill="white"/>
+            </svg>
+            <span style={{ fontSize: 18, fontWeight: 900, color: '#fff' }}>Tick<span style={{ color: '#F59E0B' }}>Pick</span></span>
+          </a>
+          <button onClick={handleSignOut} disabled={signingOut} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 8, padding: '7px 14px', fontSize: 12, fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>
+            {signingOut ? '…' : 'Sign Out'}
+          </button>
+        </div>
+
+        {/* Profile card */}
+        <div style={{ background: '#7C3AED', padding: '0 20px 28px', textAlign: 'center' }}>
+          <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+            <span style={{ fontSize: 26, fontWeight: 800, color: '#fff' }}>{initials}</span>
+          </div>
+          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff', display: 'block', marginBottom: 4 }}>{name}</span>
+          <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', display: 'block' }}>{email}</span>
+          {memberSince && <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', display: 'block', marginTop: 6 }}>Member since {memberSince}</span>}
+        </div>
+
+        <div style={{ padding: '20px 16px' }}>
+          {/* Stats */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+            <div style={statBox}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 6 }}>Entries</span>
+              <span style={{ fontSize: 28, fontWeight: 800, color: '#111827', display: 'block', lineHeight: 1 }}>{entryCount}</span>
+            </div>
+            <div style={statBox}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 6 }}>Wins 🏆</span>
+              <span style={{ fontSize: 28, fontWeight: 800, color: '#D97706', display: 'block', lineHeight: 1 }}>0</span>
+            </div>
+            <div style={statBox}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 6 }}>Credits ⚡</span>
+              <span style={{ fontSize: 28, fontWeight: 800, color: '#7C3AED', display: 'block', lineHeight: 1 }}>0</span>
+            </div>
+          </div>
+
+          {/* Account details */}
+          <div style={sectionCard}>
+            <span style={sectionTitle}>Account Details</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {[
+                { label: 'Full Name', value: name },
+                { label: 'Email Address', value: email },
+                { label: 'Phone Number', value: phone || '—' },
+                { label: 'Member Since', value: memberSince || '—' },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ borderBottom: '1px solid #F3F4F6', paddingBottom: 12 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase' as any, letterSpacing: '0.5px', display: 'block', marginBottom: 3 }}>{label}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#111827', display: 'block' }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div style={sectionCard}>
+            <span style={sectionTitle}>Navigate</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {[
+                { icon: '🏠', label: 'Home', href: '/' },
+                { icon: '🔍', label: 'Browse Competitions', href: '/browse' },
+                { icon: '🎟️', label: 'My Entries', href: '/entries' },
+                { icon: '🏆', label: 'Winners', href: '/winners' },
+              ].map(({ icon, label, href }) => (
+                <a key={label} href={href} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 4px', borderBottom: '1px solid #F3F4F6', textDecoration: 'none', color: '#374151' }}>
+                  <span style={{ fontSize: 16 }}>{icon}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, flex: 1 }}>{label}</span>
+                  <span style={{ color: '#9CA3AF' }}>›</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div style={sectionCard}>
+            <span style={sectionTitle}>Legal</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {[
+                { icon: '📄', label: 'Terms & Conditions' },
+                { icon: '🔒', label: 'Privacy Policy' },
+                { icon: '✉️', label: 'Free Entry by Post' },
+              ].map(({ icon, label }) => (
+                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 4px', borderBottom: '1px solid #F3F4F6', cursor: 'pointer', color: '#374151' }}>
+                  <span style={{ fontSize: 16 }}>{icon}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, flex: 1 }}>{label}</span>
+                  <span style={{ color: '#9CA3AF' }}>›</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Desktop layout
   return (
-    <div style={dash}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F4F6FA', fontFamily: 'inherit' }}>
       {/* Sidebar */}
-      <div style={sidebar}>
-        {/* Logo */}
+      <div style={{ width: 260, minWidth: 260, background: '#fff', borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', padding: '32px 24px' }}>
         <div style={{ marginBottom: 32 }}>
           <a href="/" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <svg width="36" height="36" viewBox="0 0 40 40" fill="none">
@@ -219,7 +307,6 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
           </a>
         </div>
 
-        {/* Avatar + name */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingBottom: 24, borderBottom: '1px solid #E5E7EB', marginBottom: 24 }}>
           <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <span style={{ fontSize: 26, fontWeight: 800, color: '#fff' }}>{initials}</span>
@@ -230,40 +317,25 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
           {memberSince && <span style={{ fontSize: 11, color: '#9CA3AF', display: 'block', marginTop: 8 }}>Member since {memberSince}</span>}
         </div>
 
-        {/* Nav links */}
         <nav style={{ flex: 1 }}>
-          <a href="/" style={navItem}>
-            <span style={{ fontSize: 16 }}>🏠</span> Home
-          </a>
-          <a href="/browse" style={navItem}>
-            <span style={{ fontSize: 16 }}>🔍</span> Browse
-          </a>
-          <a href="/entries" style={navItem}>
-            <span style={{ fontSize: 16 }}>🎟️</span> My Entries
-          </a>
-          <a href="/account" style={navItemActive}>
-            <span style={{ fontSize: 16 }}>👤</span> Account
-          </a>
+          <a href="/" style={navItem}><span style={{ fontSize: 16 }}>🏠</span> Home</a>
+          <a href="/browse" style={navItem}><span style={{ fontSize: 16 }}>🔍</span> Browse</a>
+          <a href="/entries" style={navItem}><span style={{ fontSize: 16 }}>🎟️</span> My Entries</a>
+          <a href="/account" style={navItemActive}><span style={{ fontSize: 16 }}>👤</span> Account</a>
         </nav>
 
-        {/* Sign out */}
-        <button
-          onClick={handleSignOut}
-          disabled={signingOut}
-          style={{ marginTop: 'auto', width: '100%', background: 'none', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 14px', fontSize: 13, fontWeight: 600, color: '#DC2626', cursor: signingOut ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 8 }}
-        >
+        <button onClick={handleSignOut} disabled={signingOut} style={{ marginTop: 'auto', width: '100%', background: 'none', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 14px', fontSize: 13, fontWeight: 600, color: '#DC2626', cursor: signingOut ? 'not-allowed' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 8 }}>
           <span>🚪</span> {signingOut ? 'Signing out…' : 'Sign Out'}
         </button>
       </div>
 
       {/* Main content */}
-      <div style={main}>
+      <div style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#111827', margin: 0, marginBottom: 4 }}>My Account</h1>
           <p style={{ fontSize: 14, color: '#6B7280', margin: 0 }}>Manage your profile and view your competition history.</p>
         </div>
 
-        {/* Stats row */}
         <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
           <div style={statBox}>
             <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.6px', display: 'block', marginBottom: 8 }}>Total Entries</span>
@@ -279,7 +351,6 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
           </div>
         </div>
 
-        {/* Account details */}
         <div style={sectionCard}>
           <span style={sectionTitle}>Account Details</span>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 32px' }}>
@@ -297,7 +368,6 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
           </div>
         </div>
 
-        {/* Legal & Settings */}
         <div style={sectionCard}>
           <span style={sectionTitle}>Settings & Legal</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -306,12 +376,9 @@ function AccountProfile({ onSignOut }: { onSignOut: () => void }) {
               { icon: '🔒', label: 'Privacy Policy' },
               { icon: '✉️', label: 'Free Entry by Post' },
             ].map(({ icon, label }) => (
-              <div
-                key={label}
-                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.15s' }}
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 8, cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <span style={{ fontSize: 16 }}>{icon}</span>
                 <span style={{ fontSize: 14, fontWeight: 600, color: '#374151', flex: 1 }}>{label}</span>
                 <span style={{ color: '#9CA3AF', fontSize: 16 }}>›</span>
