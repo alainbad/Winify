@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView } from 'react-native'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, ActivityIndicator } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { Colors } from '@/constants/theme'
 import { POOLS, Pool } from '@/lib/data'
@@ -57,6 +57,9 @@ export default function SuccessWeb() {
   const scale = useRef(new Animated.Value(0)).current
   const opacity = useRef(new Animated.Value(0)).current
   const [entryId, setEntryId] = useState<number | null>(null)
+  // polling state: 'loading' | 'found' | 'timeout'
+  const [pollState, setPollState] = useState<'loading' | 'found' | 'timeout'>('loading')
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     Animated.sequence([
@@ -69,16 +72,48 @@ export default function SuccessWeb() {
   }, [])
 
   useEffect(() => {
-    if (!user || !pool) return
-    // Entry was already saved on payment page — just fetch the latest entry id
-    dbQuery(`entries?user_id=eq.${user.id}&pool_id=eq.${pool.id}&order=created_at.desc&limit=1`, session!.access_token)
-      .then((data: any) => {
-        const row = Array.isArray(data) ? data[0] : data
-        if (row?.id) setEntryId(row.id)
-      }).catch(() => {})
-  }, [user, pool])
+    if (!user || !pool || !session) return
 
-  const entryNum = entryId ? `#${entryId}` : `#E-${2000 + (pool?.id ?? 0)}`
+    let elapsed = 0
+    const INTERVAL = 2000
+    const MAX_WAIT = 20000
+
+    const check = () => {
+      dbQuery(
+        `entries?user_id=eq.${user.id}&pool_id=eq.${pool.id}&order=created_at.desc&limit=1`,
+        session.access_token
+      )
+        .then((data: any) => {
+          const row = Array.isArray(data) ? data[0] : data
+          if (row?.id) {
+            setEntryId(row.id)
+            setPollState('found')
+            if (pollRef.current) clearInterval(pollRef.current)
+          }
+        })
+        .catch(() => {})
+    }
+
+    // Run immediately, then poll
+    check()
+    pollRef.current = setInterval(() => {
+      elapsed += INTERVAL
+      if (elapsed >= MAX_WAIT) {
+        if (pollRef.current) clearInterval(pollRef.current)
+        setPollState(prev => (prev === 'found' ? 'found' : 'timeout'))
+        return
+      }
+      check()
+    }, INTERVAL)
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current)
+    }
+  }, [user, pool, session])
+
+  const entryNum = entryId ? `#${entryId}` : null
+  const showSpinner = pollState === 'loading'
+  const showFallback = pollState === 'timeout' && !entryId
   const closesDate = pool ? `Closes in ${pool.time}` : 'Soon'
   const odds = pool ? `1 in ${pool.total - pool.entries + 1}` : '1 in N'
   const fee = pool ? pool.price.toFixed(2) : '0.00'
@@ -122,7 +157,15 @@ export default function SuccessWeb() {
             <View style={s.detailsTable}>
               <View style={s.detailRow}>
                 <Text style={s.detailKey}>Entry</Text>
-                <Text style={s.detailVal}>{entryNum}</Text>
+                {showSpinner ? (
+                  <ActivityIndicator size="small" color={Colors.primary} />
+                ) : showFallback ? (
+                  <Text style={[s.detailVal, { color: Colors.textSec, fontSize: 11, flex: 1, textAlign: 'right' }]}>
+                    Your entry is being confirmed — you'll receive a confirmation email shortly
+                  </Text>
+                ) : (
+                  <Text style={s.detailVal}>{entryNum}</Text>
+                )}
               </View>
               <View style={s.detailRow}>
                 <Text style={s.detailKey}>Draw closes</Text>
