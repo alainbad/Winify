@@ -32,7 +32,7 @@ When adding a new route, create both files. The web version typically uses raw H
 ### Routing
 File-based routing via expo-router:
 - `app/(tabs)/` — main tab navigation: home, browse, entries, account
-- `app/competition/[id]/` — dynamic pool detail flow: index → skill-gate → payment → success
+- `app/competition/[id]/` — dynamic pool detail flow: `index` → `skill-gate` → `payment` → `success`. Each step has both `.tsx` and `.web.tsx`.
 - `app/blog/[slug]/` — individual blog post pages
 - Static pages: `about/`, `contact/`, `help/`, `privacy/`, `terms/`, `winners/`
 
@@ -45,8 +45,10 @@ File-based routing via expo-router:
 ### Backend (Supabase)
 - **Project**: `dwjghqslnrkcjhaoaneq.supabase.co`
 - **Edge Function** (`supabase/functions/draw-winner/`): Called by a Postgres trigger when a pool fills. Calls RANDOM.ORG, inserts into `winners`, sends email via Resend.
+- **Edge Function** (`supabase/functions/gumroad-webhook/`): Receives Gumroad purchase webhooks (`application/x-www-form-urlencoded`). Verifies `seller_id`, parses `passthrough` JSON (`{ user_id, pool_id }`), upserts into `entries` with `onConflict: 'sale_id'` for idempotency. **JWT verification must be OFF** on this function (Gumroad sends no JWT).
 - **Trigger** (`supabase/migrations/auto_draw_trigger.sql`): Fires after `entries` insert; uses `pg_net` to POST to the edge function.
-- **Secrets stored in Supabase**: `RANDOM_ORG_API_KEY`, `RESEND_API_KEY`.
+- **Secrets stored in Supabase**: `RANDOM_ORG_API_KEY`, `RESEND_API_KEY`, `SERVICE_ROLE_KEY`, `GUMROAD_SELLER_ID`. Note: Supabase rejects secrets prefixed with `SUPABASE_` — use `SERVICE_ROLE_KEY` not `SUPABASE_SERVICE_ROLE_KEY`.
+- **`entries` table columns**: `user_id`, `pool_id`, `tickets`, `amount_paid`, `sale_id` (unique), `gumroad_order`.
 
 ### Post-Build HTML Patching
 `scripts/patch-html.js` runs after `expo export -p web` and:
@@ -54,6 +56,15 @@ File-based routing via expo-router:
 2. Copies everything from `public/` into `dist/`
 
 Cloudflare Pages build command must be `npm run build` (not `expo export` directly).
+
+### Payment Flow (Web)
+The web payment flow uses Gumroad as an external redirect — no payment SDK is embedded in the app:
+1. `payment.web.tsx` builds a Gumroad checkout URL with `passthrough={"user_id":"...","pool_id":...}` and redirects the tab
+2. After payment, Gumroad POSTs to the `gumroad-webhook` edge function — this is what records the entry
+3. Gumroad redirects the user back to `/competition/[id]/success`
+4. `success.web.tsx` polls the `entries` table every 2s (up to 20s) waiting for the webhook to confirm the entry
+
+**Do not record entries in `payment.web.tsx`** — entries are only created by the webhook after confirmed payment.
 
 ### Key Constants
 - `constants/theme.ts` — colour tokens (`Colors.primary` = `#6D28D9` purple, etc.)
