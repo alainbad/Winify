@@ -338,25 +338,39 @@ async def seed():
     # Indexes
     await db.users.create_index("email", unique=True)
     await db.pools.create_index("id", unique=True)
-    # Seed admin
-    if not await db.users.find_one({"email": ADMIN_EMAIL}):
-        await db.users.insert_one({
-            "id": str(uuid.uuid4()), "email": ADMIN_EMAIL,
-            "password_hash": hash_pw(ADMIN_PASSWORD), "display_name": "Admin",
-            "is_admin": True, "avatar_url": None,
+    await db.pools.create_index("seed_id", unique=True, sparse=True)
+    # Seed admin — idempotent upsert (never overrides a manually-changed password)
+    await db.users.update_one(
+        {"email": ADMIN_EMAIL},
+        {"$setOnInsert": {
+            "id": str(uuid.uuid4()),
+            "email": ADMIN_EMAIL,
+            "password_hash": hash_pw(ADMIN_PASSWORD),
+            "display_name": "Admin",
+            "is_admin": True,
+            "avatar_url": None,
             "created_at": datetime.now(timezone.utc).isoformat(),
-        })
-        log.info("Seeded admin user")
-    # Seed pools
-    if await db.pools.count_documents({}) == 0:
-        now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
-        for i, p in enumerate(SEED_POOLS):
-            doc = {**p, "id": str(uuid.uuid4()),
-                   "ends_at": now_ms + (24 + i * 6) * 3600 * 1000,
-                   "gumroad_url": "https://badranalain.gumroad.com/l/spjrva",
-                   "status": "active"}
-            await db.pools.insert_one(doc)
-        log.info(f"Seeded {len(SEED_POOLS)} pools")
+        }},
+        upsert=True,
+    )
+    log.info("Admin user ensured (idempotent)")
+    # Seed pools — idempotent upsert by stable seed_id (brand+title)
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    for i, p in enumerate(SEED_POOLS):
+        seed_id = f"{p['brand']}|{p['title']}"
+        await db.pools.update_one(
+            {"seed_id": seed_id},
+            {"$setOnInsert": {
+                **p,
+                "seed_id": seed_id,
+                "id": str(uuid.uuid4()),
+                "ends_at": now_ms + (24 + i * 6) * 3600 * 1000,
+                "gumroad_url": "https://badranalain.gumroad.com/l/spjrva",
+                "status": "active",
+            }},
+            upsert=True,
+        )
+    log.info(f"{len(SEED_POOLS)} pools ensured (idempotent)")
 
 @app.on_event("shutdown")
 async def shutdown():
