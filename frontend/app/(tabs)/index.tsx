@@ -36,7 +36,7 @@ export default function Home() {
         <LinearGradient colors={[COLORS.inverse, COLORS.brandDark, COLORS.brand]} style={styles.hero}>
           <SafeAreaView edges={["top"]}>
             <View style={styles.heroHeader}>
-              <Text style={styles.logo}>Tick<Text style={{ color: COLORS.gold }}>Pick</Text></Text>
+              <Text style={styles.logo}>Tick<Text style={{ color: COLORS.gold }}>-Pick</Text></Text>
               <Pressable
                 testID="header-avatar"
                 onPress={() => router.push(user ? "/(tabs)/account" : "/auth")}

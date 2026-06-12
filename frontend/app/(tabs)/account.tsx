@@ -26,7 +26,7 @@ export default function Account() {
           <LinearGradient colors={[COLORS.brand, COLORS.brandDark]} style={styles.guestIcon}>
             <Ionicons name="ticket" size={28} color="#fff" />
           </LinearGradient>
-          <Text style={styles.guestTitle}>Sign in to Tick Pick</Text>
+          <Text style={styles.guestTitle}>Sign in to Tick-Pick</Text>
           <Text style={styles.guestSub}>See your entries, manage your tickets, and win.</Text>
           <Pressable testID="signin-cta" style={styles.guestBtn} onPress={() => router.push("/auth")}>
             <Text style={styles.guestBtnText}>Sign in or create account</Text>

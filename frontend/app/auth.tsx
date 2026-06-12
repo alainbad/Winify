@@ -40,11 +40,11 @@ export default function Auth() {
             <Text style={styles.backText}>Back</Text>
           </Pressable>
 
-          <Text style={styles.logo}>Tick<Text style={{ color: COLORS.gold }}>Pick</Text></Text>
+          <Text style={styles.logo}>Tick<Text style={{ color: COLORS.gold }}>-Pick</Text></Text>
 
           <View style={styles.card}>
             <Text style={styles.title}>{mode === "signin" ? "Welcome back" : "Create your account"}</Text>
-            <Text style={styles.sub}>{mode === "signin" ? "Sign in to see your entries." : "Join Tick Pick — it takes 10 seconds."}</Text>
+            <Text style={styles.sub}>{mode === "signin" ? "Sign in to see your entries." : "Join Tick-Pick — it takes 10 seconds."}</Text>
 
             {mode === "signup" && (
               <View style={styles.field}>
@@ -79,7 +79,7 @@ export default function Auth() {
 
             <Pressable onPress={() => { setError(null); setMode(mode === "signin" ? "signup" : "signin"); }} testID="toggle-mode">
               <Text style={styles.toggle}>
-                {mode === "signin" ? "New to Tick Pick? " : "Already have an account? "}
+                {mode === "signin" ? "New to Tick-Pick? " : "Already have an account? "}
                 <Text style={{ color: COLORS.brand, fontWeight: "500" }}>{mode === "signin" ? "Create an account" : "Sign in"}</Text>
               </Text>
             </Pressable>

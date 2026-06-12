@@ -161,7 +161,7 @@ export default function Checkout() {
             )}
           </Pressable>
 
-          <Text style={styles.terms}>By confirming you agree to Tick Pick's terms & draw rules.</Text>
+          <Text style={styles.terms}>By confirming you agree to Tick-Pick's terms & draw rules.</Text>
         </View>
       </ScrollView>
     </View>
