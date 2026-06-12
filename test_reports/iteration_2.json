@@ -1,0 +1,53 @@
+{
+  "summary": "Backend-only re-verification of TickPick (Golden Ticket Hub) against all 19 review_request items. Rewrote pytest suite at /app/backend/tests/test_tickpick_api.py (20 tests, 19 PASSED, 1 SKIPPED). All auth flows (signup, signin admin, signin wrong-pw -> 401, GET /auth/me, PATCH /auth/me), pools (12 seeded, GET by id, bad id -> 404), entries (success increments tickets_sold, qty=0/qty=11 -> 422, no-token -> 401, /entries/mine recent-first), public /draws, admin overview (403 for non-admin), admin run-draw (403 for non-admin, success returns DrawOut with winning_ticket in [1, tickets_sold] / has_signature=false / serial_number=null, marks pool drawn, 2nd call -> 400) all verified. Recursive _id check confirms NO MongoDB _id leaks in any endpoint. RANDOM_ORG_API_KEY intentionally empty -> fallback to secrets.randbelow as expected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/admin/draws/{pid}",
+        "issue": "winner_email may return null even when the pool has API-created entries. Root cause: seeded pools set tickets_sold to non-zero phantom values (e.g. Amazon=187) without inserting matching entry documents. The draw picks winning_ticket uniformly in [1, tickets_sold] and looks it up in entries[*].ticket_numbers — if the chosen number falls in the phantom seeded range, no winner is found. Review_request expects winner_email to match the entry holder. Either (a) seed pools with tickets_sold=0 and let real entries fill them, or (b) restrict winning_ticket to only ticket numbers that exist in db.entries for that competition."
+      },
+      {
+        "endpoint": "POST /api/admin/draws/{pid}",
+        "issue": "Cannot reproduce the '0 entries -> 400' branch with the current seed because every seeded pool has tickets_sold > 0 from start. Code path exists and is correct (line 265-266 server.py), test SKIPPED. Consider seeding at least one pool with tickets_sold=0 for full coverage."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_tickpick_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix winner_email=null behavior in /app/backend/server.py run_draw (line 267-274): either pick winning_ticket from the union of actual entries[*].ticket_numbers, or change seed to set tickets_sold=0 so the draw range matches real entries. Current behavior allows a draw to pick a 'ghost' winner with no email — a real bug for the prize-draw use case.",
+    "Add a seed pool with tickets_sold=0 so the '0-entries -> 400' admin draw branch can be exercised in tests.",
+    "OPTIONAL: random_org_pick() in server.py (lines 232-256) has dead code — line 249 assigns `serial` then line 251 reassigns it. Remove the first assignment.",
+    "OPTIONAL: Migrate FastAPI @app.on_event('startup'/'shutdown') to the lifespan context manager (deprecated in modern FastAPI).",
+    "OPTIONAL: Set RANDOM_ORG_API_KEY for production so draws return has_signature=true and a real serial_number."
+  ],
+  "critical_code_review_comments": [
+    "server.py:267-274 picks winning_ticket from [1, tickets_sold] but the entries collection only contains a subset of those numbers (seeded tickets_sold are phantom). This produces null winners — high impact for a prize-draw product.",
+    "server.py:249,251 — `serial` is assigned twice consecutively; line 249 is dead code.",
+    "server.py:336 — @app.on_event is deprecated; prefer lifespan context manager.",
+    "server.py is 367 lines — still well under the 700 threshold, no split needed yet.",
+    "EntryOut.total is typed `float` but value is qty*ticket_price (int*int). Works fine via Pydantic coercion but slightly inconsistent — could be int.",
+    "All endpoints correctly exclude `_id` via projection ({\"_id\": 0}). Verified by recursive _contains_id helper across all 19 responses."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_tickpick_api.py (rewritten — 20 pytest tests covering all 19 review_request items, plus recursive _id leak check)"
+  ],
+  "success_rate": {
+    "backend": "100% of executed tests (19 passed, 1 skipped — skip is environmental: no active 0-entry pool exists in seed)",
+    "frontend": "not tested this iteration (backend-only request)"
+  },
+  "seed_data_creation": "Each test run creates a fresh QA user `qa+<unix_ts>_<hex>@example.com` via /auth/signup to remain idempotent. Existing seeded admin (admin@tickpick.com) and 12 seeded pools are reused. The success-draw test creates one entry and then draws on one previously-active pool — that pool moves to status='drawn' permanently (re-running the suite will pick a different still-active pool automatically).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Tests at /app/backend/tests/test_tickpick_api.py (pytest, JUnit at /app/test_reports/pytest/pytest_results.xml). BASE_URL reads EXPO_BACKEND_URL then EXPO_PUBLIC_BACKEND_URL from env. Each TestAdminDraw success run consumes one active pool (marks it drawn) — over time pools dwindle; if all pools become drawn the test will fail with 'need at least one active pool with capacity'. Reset by clearing db.draws and resetting pool.status='active' if needed. Recursive `_contains_id` helper verifies no MongoDB _id leak across every endpoint.",
+  "rca_of_issue": "Issue: POST /api/admin/draws/{pid} can return winner_email=null even when the pool has real entries. Reproduction: 1) GET /api/pools — pick any seeded pool (e.g. Amazon tickets_sold=187). 2) POST /api/entries with qty=1 (now tickets_sold=188, but only ticket #188 has an owner). 3) POST /api/admin/draws/{pid} as admin. 4) Random pick uniformly samples [1,188]; with probability 187/188 the chosen ticket has no owner -> winner_email=null. Mitigation options: (a) Modify run_draw to draw from the actual list of issued ticket_numbers stored in entries (cryptographically pick one entry, then pick a ticket within it), or (b) Change seed_pools to start every pool with tickets_sold=0 so the draw space equals the entries space. Option (a) is more product-correct."
+}
