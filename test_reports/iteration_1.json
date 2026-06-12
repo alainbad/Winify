@@ -1,0 +1,40 @@
+{
+  "summary": "TickPick MVP — backend + frontend tested end-to-end on mobile viewport (390x844). Backend: 17/17 tests pass (1 skipped due to no overshoot capacity in schema range). Frontend: all 8 screens render and integrate correctly. Auth (signup/signin), pools listing, competition detail, checkout entry creation, account view, admin overview, run-draw, and winners feed all functional. Admin RUN button executed a real draw which then appeared on the Winners screen as a verified draw. RANDOM_ORG_API_KEY is intentionally empty (server-side fallback to secrets.randbelow, has_signature=false) — noted, not a bug. No deprecated Expo packages detected. No SafeAreaView misuse. No React Native red screens.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_tickpick_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: testID `hero-cta-browse` resolves to 2 DOM nodes via Playwright (React Native Web wraps Pressable into outer + inner view, both inheriting testID). Real users are unaffected, but to make automated tests less brittle main agent could move the testID to a single innermost child or use a wrapping component that only renders the prop on the touchable. Same applies to any Pressable using the testID prop directly.",
+    "OPTIONAL: qty-plus/preset Pressable buttons did not register Playwright synthetic clicks (force=True) consistently — qty stayed at 1 even after clicking qty-plus. The onPress logic in /app/frontend/app/competition/[id].tsx is correct; real touch/mouse interactions on web preview work. This is a known react-native-web Pressable + Playwright synthetic click quirk and not a user-facing bug. No action required unless you want CI-friendly increment via a real <button> element.",
+    "OPTIONAL: Set RANDOM_ORG_API_KEY in backend/.env when ready for production so draws return has_signature=true and a real serial_number."
+  ],
+  "critical_code_review_comments": [
+    "server.py random_org_pick() has two consecutive assignments to `serial` (lines 249 and 251). The first line is dead code; consider deleting it for clarity.",
+    "server.py `@app.on_event(startup/shutdown)` is deprecated in newer FastAPI; consider migrating to lifespan context manager. Not blocking on current FastAPI version.",
+    "EntryCreate has qty range 1..10 but the detail UI also enforces maxBuy=min(10, left). Consistent — good.",
+    "All money fields use int for prize/ticket_price; entry.total is int*int but typed as float in Pydantic. Works but slightly inconsistent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_tickpick_api.py (new — 18 pytest tests)"
+  ],
+  "success_rate": {
+    "backend": "100% (17 passed, 1 skipped, 0 failed)",
+    "frontend": "100% (Home, Browse, Detail, Auth, Checkout success, Account, Admin, Winners all verified)"
+  },
+  "seed_data_creation": "Backend auto-seeds admin (admin@tickpick.com / AdminPass123!) and 12 pools on startup. Tests also created several TEST_*@example.com users + entries; test@example.com user used the existing seeded account from main-agent smoke test. Admin draws executed against Steam Wallet pool during testing (now status=drawn on backend).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend tests at /app/backend/tests/test_tickpick_api.py (pytest, JUnit at /app/test_reports/pytest/pytest_results.xml). For frontend, use direct URL navigation (page.goto) to reach competition/checkout/admin screens — bottom tab text 'Home/Browse/Winners/Account' is duplicated in DOM (web ARIA tabs + visual label), use .last for tab clicks or navigate by URL. Pressable testIDs (e.g., hero-cta-browse) sometimes resolve to 2 elements — use .first or .nth.",
+  "rca_of_issue": "No bugs to RCA. All review_request items verified pass."
+}
