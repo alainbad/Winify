@@ -1,0 +1,202 @@
+{
+  "app_name": "Tick Pick",
+  "personality": "4 Tactile / Playful LIGHT",
+  "personality_one_liner": "A premium yet gamified and energetic commerce experience, blending playful ticket-stub motifs with refined, calm browsing.",
+  "color": {
+    "surface": "#FAF8FF",
+    "onSurface": "#1A0A2E",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#1A0A2E",
+    "surfaceTertiary": "#F3EBFF",
+    "onSurfaceTertiary": "#6D28D9",
+    "surfaceInverse": "#2D1B69",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#6D28D9",
+    "brandPrimary": "#6D28D9",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#F59E0B",
+    "onBrandSecondary": "#1A0A2E",
+    "brandTertiary": "#4C1D95",
+    "onBrandTertiary": "#FFFFFF",
+    "success": "#10B981",
+    "onSuccess": "#FFFFFF",
+    "warning": "#F59E0B",
+    "onWarning": "#FFFFFF",
+    "error": "#EF4444",
+    "onError": "#FFFFFF",
+    "info": "#3B82F6",
+    "onInfo": "#FFFFFF",
+    "border": "#E8DEFF",
+    "borderStrong": "#6D28D9",
+    "divider": "#E8DEFF",
+    "tier_micro": "#0EA5E9",
+    "tier_volume": "#C4B5FD",
+    "tier_mega": "#F59E0B"
+  },
+  "typography": {
+    "displayFontFamily": "Outfit",
+    "textFontFamily": "Figtree",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous tactile spacing. Elements shouldn't feel cramped. Padding inside cards is md or lg. Vertical rhythm should be obvious.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "2",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": "true",
+    "do's": [
+      "Apply glass to sticky bottom CTAs on the Competition Detail screen",
+      "Apply glass to the bottom tab bar when content scrolls behind it",
+      "Apply to feature overlays like 'Ending Soon' floating pills over images"
+    ],
+    "dont's": [
+      "Never blur body content or list rows",
+      "Don't stack glass on top of glass"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Home",
+      "purpose": "Showcase featured draws and energetic gamified elements to drive immediate entry.",
+      "states": {
+        "loading": "Skeleton grids and a subtle pulsing purple logo",
+        "empty": "No active draws? Show a playful 'Cooking up new prizes' ticket stub illustration",
+        "error": "Failed to load draws. Show a broken ticket stub with a retry button"
+      },
+      "layout": "Top header with user balance/avatar. Hero section displaying large floating gift card images over a radial gradient background with a primary CTA. Followed by a horizontal 'Live Winners' ticker. Below that, a 2-col grid of 'Featured Pools' using rounded cards, ending with Trust Pillars."
+    },
+    {
+      "name": "Browse",
+      "purpose": "Allow users to filter, sort, and discover all active gift card pools.",
+      "states": {
+        "loading": "Category chips and 2-col grid skeleton",
+        "empty": "No pools found for this category. Show an empty ticket illustration.",
+        "error": "Error message with a primary retry CTA."
+      },
+      "layout": "Sticky top bar with horizontal scrollable category chips (Gift Cards, Gaming, etc.) and a Sort dropdown pill. Below is a padded 2-col grid of competition cards."
+    },
+    {
+      "name": "Competition Detail",
+      "purpose": "Persuade the user to enter the draw by showing the prize value, countdown urgency, and easy quantity selection.",
+      "states": {
+        "loading": "Full screen skeleton focusing on the large hero image area.",
+        "empty": "N/A",
+        "error": "Failed to fetch details. Standard error state."
+      },
+      "layout": "Massive top half devoted to a floating gift card visual over a radial-gradient brand-color background. Top right corner has a tier badge (Micro/Volume/Mega). Below the image: Prize Title, Countdown timer with 4 animated flip boxes (DD:HH:MM:SS), and a thick progress bar (tickets sold). A sticky bottom CTA fixed to the bottom holding the ticket quantity selector (+/- slider) and the 'Enter Draw - $X' primary button with a ticket-notch visual shape."
+    },
+    {
+      "name": "Checkout",
+      "purpose": "Confirm the entry details and redirect to Gumroad for payment securely.",
+      "states": {
+        "loading": "Spinner indicating checkout prep",
+        "empty": "N/A",
+        "error": "Error confirming quantity."
+      },
+      "layout": "Clean summary card: item, quantity, processing fee, total. Big Gumroad redirect button at the bottom. Trust icons below the button."
+    },
+    {
+      "name": "Winners",
+      "purpose": "Provide social proof and transparency with RANDOM.ORG verified draws.",
+      "states": {
+        "loading": "List skeleton",
+        "empty": "No winners yet. 'First draw happens soon!'",
+        "error": "Failed to load winners."
+      },
+      "layout": "Feed of recent winners (avatar, prize, username). A secondary tab/section showing a data-table-like list of verified draws with their RANDOM.ORG serial numbers."
+    },
+    {
+      "name": "Account & My Entries",
+      "purpose": "User management and historical entry tracking.",
+      "states": {
+        "loading": "Profile skeleton",
+        "empty": "No entries yet. 'Get your first ticket!'",
+        "error": "Failed to load profile."
+      },
+      "layout": "Header with avatar and display name. 'My Entries' list showing past pools entered, status (Won/Lost/Pending), and ticket count. Sign out button at the bottom."
+    }
+  ],
+  "haptics": {
+    "primary_button_press": "impactMedium",
+    "ticket_quantity_change": "selection",
+    "tab_change": "selection",
+    "pull_to_refresh": "impactLight",
+    "success_confetti": "notificationSuccess"
+  },
+  "images": {
+    "amazon_card": {
+      "url": "https://images.unsplash.com/photo-1649734926695-1b1664e98842?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHxhbWF6b24lMjBsb2dvJTIwcG5nfGVufDB8fHx8MTc4MTI2NjUyNHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Amazon Gift Card"
+    },
+    "apple_card": {
+      "url": "https://images.unsplash.com/photo-1621768216002-5ac171876625?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwxfHxhcHBsZSUyMGxvZ28lMjB0cmFuc3BhcmVudHxlbnwwfHx8fDE3ODEyNjY1MjR8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Apple Gift Card"
+    },
+    "steam_card": {
+      "url": "https://images.unsplash.com/photo-1768560855996-32fc281b95a0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTJ8MHwxfHNlYXJjaHwxfHxzdGVhbSUyMGdhbWluZyUyMGxvZ298ZW58MHx8fHwxNzgxMjY2NTM4fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Steam Gift Card"
+    },
+    "nike_card": {
+      "url": "https://images.unsplash.com/photo-1608541737042-87a12275d313?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwxfHxuaWtlJTIwc3dvb3NofGVufDB8fHx8MTc4MTI2NjUzOHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Nike Gift Card"
+    },
+    "sephora_card": {
+      "url": "https://images.unsplash.com/photo-1546872781-d2c17c9968c0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w7NDk1ODB8MHwxfHNlYXJjaHwxfHxzZXBob3JhJTIwbWFrZXVwfGVufDB8fHx8MTc4MTI2NjUzOHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Sephora Gift Card"
+    },
+    "uber_eats_card": {
+      "url": "https://images.unsplash.com/photo-1598769398698-bab7f1b4cadd?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwxfHx1YmVyJTIwZWF0cyUyMGRlbGl2ZXJ5fGVufDB8fHx8MTc4MTI2NjUzOXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Uber Eats Gift Card"
+    },
+    "hero_confetti_bg": {
+      "url": "https://images.unsplash.com/photo-1759317300444-9cd5cb9900b3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMHB1cnBsZSUyMGdvbGQlMjBjb25mZXR0aSUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzgxMjY2NTI0fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Gold and purple abstract confetti"
+    },
+    "winner_avatar": {
+      "url": "https://images.unsplash.com/photo-1506863530036-1efeddceb993?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwyfHxzbWlsaW5nJTIwcGVyc29uJTIwcG9ydHJhaXQlMjBzdHVkaW98ZW58MHx8fHwxNzgxMjY2NTI0fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Winner avatar"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly follow the locked palette: Purple (#6D28D9), Gold (#F59E0B), Shell (#2D1B69), BG (#FAF8FF), Border (#E8DEFF), Text (#1A0A2E).",
+    "Font weights MUST be capped at 500 max per core rules, even though the user requested 800-900. Use Outfit for display headings to maintain the thick/playful feel, and Figtree for body text.",
+    "Component Shape Language: Use 16-20px rounded cards. Incorporate 'ticket-stub' notches (cutout semi-circles on the left/right edges) on primary CTAs and badges to deliver the gamified raffle feel.",
+    "Competition Card Component: Requires an image area with a radial gradient background (using brand colors), a floating gift card image on top, tier badges (MICRO, VOLUME, MEGA) mapped to the defined colors, and a thick progress bar representing tickets sold.",
+    "Motion: Ensure countdown timers use a 4-box layout with flip animations. Integrate a confetti burst effect on successful checkout/entry.",
+    "Layout Rules: Competition Detail needs a sticky bottom CTA container housing the ticket quantity selector (+/- or slider), total price, and 'Enter draw' button. Ensure proper safe-area padding below it.",
+    "Apply `expo-glass-effect` to the sticky bottom CTA container in the Detail screen to let the scrollable description blur underneath."
+  ]
+}
